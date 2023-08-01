@@ -1,0 +1,12 @@
+* {
+    margin: 0;
+}
+.App {
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+}
+.dark-mode {
+    background: #5E5E60;
+    width: 100%;
+}
