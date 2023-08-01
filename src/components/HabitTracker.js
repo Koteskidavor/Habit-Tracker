@@ -107,9 +107,11 @@ const HabitTracker = () => {
     setDate(nextDay);
   };
   const handlePopoverOpen = (event) => {
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
   const handlePopoverClose = (event) => {
+    event.stopPropagation();
     setAnchorEl(null);
   };
   const dayOfWeek = date.toLocaleString("en-US", { weekday: "short" });
@@ -649,7 +651,8 @@ const HabitTracker = () => {
                           }
                           return (
                               <div key={index} style={cardStyle} onClick={() => handleCardClick(dayOfWeek, index)}>
-                                <Habit dayOfWeek={dayOfWeek}
+                                <Habit
+                                       dayOfWeek={dayOfWeek}
                                        habitName={habitName}
                                        img={img}
                                        handlePopoverOpen={handlePopoverOpen}
@@ -742,12 +745,13 @@ const HabitTracker = () => {
                           }
                           return (
                             <div key={index} style={cardStyle} onClick={() => handleAfterNoonCardClick(dayOfWeek, index)}>
-                              <Habit dayOfWeek={dayOfWeek}
-                                     habitName={habitName}
-                                     img={img}
-                                     handlePopoverOpen={handlePopoverOpen}
-                                     handlePopoverClose={handlePopoverClose}
-                                     anchorEl={anchorEl}
+                              <Habit
+                                  dayOfWeek={dayOfWeek}
+                                  habitName={habitName}
+                                  img={img}
+                                  handlePopoverOpen={handlePopoverOpen}
+                                  handlePopoverClose={handlePopoverClose}
+                                  anchorEl={anchorEl}
                               />
                             </div>
                           )
