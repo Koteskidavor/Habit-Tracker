@@ -14,7 +14,6 @@ import { Popover, TextField, Button, Tab, Tabs, IconButton, Dialog, DialogTitle,
 import AddIcon from '@mui/icons-material/Add';
 import DialogContext from "@mui/material/Dialog/DialogContext";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Habit from './Habit';
 import AddHabit from './AddHabit';
 
 const HabitTracker = () => {
@@ -35,13 +34,20 @@ const HabitTracker = () => {
   const [eveningCheckedItems, setEveningCheckedItems] = useState([]);
   const [openAnyTimeDialog, setOpenAnyTimeDialog] = useState(false);
   const [anyTimeCheckedItems, setAnyTimeCheckedItems] = useState([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const currentDate = new Date();
 
   const [hover, setHover] = useState(false);
   const [hoverAfterNoon, setHoverAfterNoon] = useState(false);
   const [hoverEvening, setHoverEvening] = useState(false);
   const [hoverAnyTime, setHoverAnyTime] = useState(false);
 
+  const images = [
+    { src: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f305.png', alt: 'morning_emoji' },
+    { src: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/2600.png', alt: 'afternoon_emoji' },
+    { src: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f307.png', alt: 'evening_emoji' },
+    { src: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/23f0.png', alt: 'anyTime_emoji' },
+  ]
+  const partsOfDay = ["Morning", "Afternoon", "Evening", "Afternoon", "Any Time"];
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
@@ -81,7 +87,7 @@ const HabitTracker = () => {
   const handleHoverAnyTimeLeave = () => {
     setHoverAnyTime(false);
   };
-  const handleAnyTime = () => {
+  const handleAnyTimeExClick = () => {
     setAnyTimeEx(!anyTimeEx);
   };
   const handlePreviousDayClick = () => {
@@ -107,11 +113,9 @@ const HabitTracker = () => {
     setDate(nextDay);
   };
   const handlePopoverOpen = (event) => {
-    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
   const handlePopoverClose = (event) => {
-    event.stopPropagation();
     setAnchorEl(null);
   };
   const dayOfWeek = date.toLocaleString("en-US", { weekday: "short" });
@@ -204,10 +208,50 @@ const HabitTracker = () => {
     const storedAnyTimeCheckedItems = localStorage.getItem("anyTimeCheckedItems");
     return storedAnyTimeCheckedItems ? JSON.parse(storedAnyTimeCheckedItems) : {};
   })
+  const getCurrentWeekIndex = () => {
+    const today = new Date();
+    const daysBefore = 0;
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - daysBefore);
+
+    const timeDiff = today - startDate;
+
+    const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+
+    const weekIndex = Math.floor(timeDiff / oneWeekInMilliseconds);
+
+    return weekIndex;
+  }
+  // const updateCheckedHabits = (weekIndex, dayOfWeek, selectedHabit) => {
+  //   setCheckedHabits((prevCheckedHabits) => {
+  //     const updatedCheckedHabits = { ...prevCheckedHabits };
+  //
+  //     if(!updatedCheckedHabits[weekIndex]) {
+  //       updatedCheckedHabits[weekIndex] = {};
+  //     }
+  //     if(!updatedCheckedHabits[weekIndex][dayOfWeek]) {
+  //       updatedCheckedHabits[weekIndex][dayOfWeek] = [];
+  //     }
+  //
+  //     const habitsForDay = updatedCheckedHabits[weekIndex][dayOfWeek];
+  //
+  //     if(habitsForDay.includes(selectedHabit.habit)) {
+  //       updatedCheckedHabits[weekIndex][dayOfWeek] = habitsForDay.filter(
+  //           (habit) => habit !== selectedHabit.habit
+  //       )
+  //     } else {
+  //       updatedCheckedHabits[weekIndex][dayOfWeek] = [
+  //           ...habitsForDay,
+  //           selectedHabit.habit,
+  //       ]
+  //     }
+  //     localStorage.setItem("morningCheckedItems", JSON.stringify(updatedCheckedHabits));
+  //     return updatedCheckedHabits;
+  //   })
+  // }
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
-    const dayOfWeek = date.toLocaleString("en-US", { weekday: "short" });
-
+    const dayOfWeek = date.toLocaleString("en-US", { weekday: "short", });
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
       const habitsForDay = updatedCheckedHabits[dayOfWeek] || [];
@@ -302,14 +346,14 @@ const HabitTracker = () => {
     }
   }, [anyTimeHabits]);
   // morning Dialog
-  const handleOpenMorningDialog = () => {
+  const handleOpenMorningDialog = (event) => {
     setOpenMorningDialog(true);
   }
   const handleCloseMorningDialog = () => {
     setCheckedHabits([]);
     setClickedHabitIndex([]);
     setOpenMorningDialog(false);
-    localStorage.removeItem("morningCheckedItems")
+    localStorage.removeItem("morningCheckedItems");
     localStorage.removeItem("clickedHabitIndex");
   }
   const handleSubmitMorningDialog = () => {
@@ -574,380 +618,101 @@ const HabitTracker = () => {
                   </div>
                   <ArrowForwardIcon onClick={handleNextDayClick} />
                 </div>
-                <div style={{ marginTop: "20px" }}>
-                  <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#C1C2C5",
-                        justifyContent: "flex-start",
-                        marginLeft: "30px",
-                      }}
-                  >
-                    <ExpandLessIcon
-                        style={{
-                          fontSize: "15px",
-                          marginRight: "15px",
-                          borderRadius: hover ? "0" : "50%",
-                          transition: "transform 0.5s",
-                          transform: expanded ? "rotate(-180deg)" : "rotate(0deg)",
-                          background: hover ? "rgba(52, 58, 64, 0.2)" : "transparent",
-                        }}
-                        onClick={handleExpandIconClick}
-                        onMouseEnter={handleHoverEnter}
-                        onMouseLeave={handleHoverLeave}
-                    />
-                    <img
-                        style={{ height: "20px", width: "20px", marginRight: "10px" }}
-                        draggable="false"
-                        alt="morning_emoji"
-                        src="https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f305.png"
-                    />
-                    <span style={{ fontSize: "25px" }}>Morning</span>
-                    <IconButton style={{ color: '#C1C2C5',}} onClick={handleOpenMorningDialog}>
-                      <AddIcon />
-                    </IconButton>
-                    <AddHabit
-                        open={openMorningDialog}
-                        handleClose={handleCloseMorningDialog}
-                        handleSubmit={handleSubmitMorningDialog}
-                        habitRenderer={morningHabitRenderer}
-                        handleCheckboxClick={handleCheckboxClick}
-                        dayOfWeek={dayOfWeek}
-                        checkedHabits={checkedHabits}
-                        isMobileResponsive={isMobileResponsive}
-                    />
-                  </div>
-                  {!expanded && (
-                      <div
-                          style={{
-                            display: "flex",
-                            marginLeft: "30px",
-                            opacity: expanded ? 0 : 1,
-                            flexWrap: "wrap",
-                          }}
-                      >
-                        {checkedHabits[dayOfWeek]?.map((habit, index) => {
-                          const habitDetails = morningHabitRenderer.find((item) => item.habit === habit);
-                          if(!habitDetails) {
-                            return null;
-                          }
-                          const { img, habit: habitName } = habitDetails;
-                          const isHabitClicked = clickedHabitIndex[dayOfWeek]?.includes(index);
-                          const cardStyle = {
-                            background: isHabitClicked
-                                ? "linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%)"
-                                : "#212529",
-                            border: '5px solid transparent',
-                            color: 'white',
-                            width: isMobileResponsive ? "100%" : "9vw",
-                            marginBottom: isMobileResponsive ? "10px" : "0",
-                            marginRight: isMobileResponsive ? "10px" : "0",
-                            padding: "20px",
-                            borderRadius: "5px",
-                            position: "relative",
-                            marginLeft: "10px",
-                            marginTop: "10px",
-                          }
-                          return (
-                              <div key={index} style={cardStyle} onClick={() => handleCardClick(dayOfWeek, index)}>
-                                <Habit
-                                       dayOfWeek={dayOfWeek}
-                                       habitName={habitName}
-                                       img={img}
-                                       handlePopoverOpen={handlePopoverOpen}
-                                       handlePopoverClose={handlePopoverClose}
-                                       anchorEl={anchorEl}
-                                />
-                              </div>
-                          )
-                        })}
-                      </div>
-                  )}
-                </div>
-                <div style={{ marginTop: "10px" }}>
-                  <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#C1C2C5",
-                        justifyContent: "flex-start",
-                        marginLeft: "30px",
-                      }}
-                  >
-                    <ExpandLessIcon
-                        style={{
-                          fontSize: "15px",
-                          marginRight: "15px",
-                          borderRadius: hoverAfterNoon ? "0" : "50%",
-                          transition: "transform 0.5s",
-                          transform: afterNoonEx ? "rotate(-180deg)" : "rotate(0deg)",
-                          background: hoverAfterNoon
-                              ? "rgba(52, 58, 64, 0.2)"
-                              : "transparent",
-                        }}
-                        onClick={handleAfterNoonExClick}
-                        onMouseEnter={handleHoverAfterNoonEnter}
-                        onMouseLeave={handleHoverAfterNoonLeave}
-                    />
-                    <img
-                        style={{ height: "20px", width: "20px", marginRight: "10px" }}
-                        draggable="false"
-                        alt="morning_emoji"
-                        src="https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/2600.png"
-                    />
-                    <span style={{ fontSize: "25px" }}>Afternoon</span>
-                    <IconButton style={{ color: '#C1C2C5' }} onClick={handleOpenAfterNoonDialog} >
-                      <AddIcon />
-                    </IconButton>
-                    <AddHabit
-                       open={openAfterNoonDialog}
-                       handleClose={handleCloseAfterNoonDialog}
-                       handleSubmit={handleSubmitAfterNoonDialog}
-                       habitRenderer={afterNoonHabitRenderer}
-                       handleCheckboxClick={handleAfterNoonCheckboxClick}
-                       dayOfWeek={dayOfWeek}
-                       checkedHabits={afterNoonHabits}
-                       isMobileResponsive={isMobileResponsive}
-                    />
-                  </div>
-                  {!afterNoonEx && (
-                      <div
-                          style={{
-                            display: "flex",
-                            marginLeft: "30px",
-                            marginTop: "15px",
-                            opacity: "1",
-                            flexWrap: "wrap",
-                          }}
-                      >
-                        {afterNoonHabits[dayOfWeek]?.map((habit, index) => {
-                          const habitDetails = afterNoonHabitRenderer.find((item) => item.habit === habit);
-                          if(!habitDetails) {
-                            return null;
-                          }
-                          const { img, habit: habitName } = habitDetails;
-                          const isHabitClicked = clickedAfterNoonHabitIndex[dayOfWeek]?.includes(index);
-                          const cardStyle = {
-                            background: isHabitClicked
-                                ? "linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%)"
-                                : "#212529",
-                            border: '5px solid transparent',
-                            color: 'white',
-                            width: isMobileResponsive ? "100%" : "9vw",
-                            marginBottom: isMobileResponsive ? "10px" : "0",
-                            marginRight: isMobileResponsive ? "10px" : "0",
-                            padding: "20px",
-                            borderRadius: "5px",
-                            position: "relative",
-                            marginLeft: "10px",
-                            marginTop: "10px",
-                          }
-                          return (
-                            <div key={index} style={cardStyle} onClick={() => handleAfterNoonCardClick(dayOfWeek, index)}>
-                              <Habit
-                                  dayOfWeek={dayOfWeek}
-                                  habitName={habitName}
-                                  img={img}
-                                  handlePopoverOpen={handlePopoverOpen}
-                                  handlePopoverClose={handlePopoverClose}
-                                  anchorEl={anchorEl}
-                              />
-                            </div>
-                          )
-                        })}
-                      </div>
-                  )}
-                </div>
-                <div style={{ marginTop: "10px" }}>
-                  <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#C1C2C5",
-                        justifyContent: "flex-start",
-                        marginLeft: "30px",
-                      }}
-                  >
-                    <ExpandLessIcon
-                        style={{
-                          fontSize: "15px",
-                          marginRight: "15px",
-                          borderRadius: hoverEvening ? "0" : "50%",
-                          transition: "transform 0.5s",
-                          transform: eveningEx ? "rotate(-180deg)" : "rotate(0deg)",
-                          background: hoverEvening
-                              ? "rgba(52, 58, 64, 0.2)"
-                              : "transparent",
-                        }}
-                        onClick={handleEveningExClick}
-                        onMouseEnter={handleHoverEveningEnter}
-                        onMouseLeave={handleHoverEveningLeave}
-                    />
-                    <img
-                        style={{ height: "20px", width: "20px", marginRight: "10px" }}
-                        draggable="false"
-                        alt="evening"
-                        src="https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f307.png"
-                    />
-                    <span style={{ fontSize: "25px" }}>Evening</span>
-                    <IconButton style={{ color: '#C1C2C5'}} onClick={handleOpenEveningDialog} >
-                      <AddIcon />
-                    </IconButton>
-                    <AddHabit
-                        open={openEveningDialog}
-                        handleClose={handleCloseEveningDialog}
-                        handleSubmit={handleSubmitEveningDialog}
-                        habitRenderer={eveningHabitRenderer}
-                        handleCheckboxClick={handleEveningCheckboxClick}
-                        dayOfWeek={dayOfWeek}
-                        checkedHabits={eveningHabits}
-                        isMobileResponsive={isMobileResponsive}
-                    />
-                  </div>
-                  {!eveningEx && (
-                      <div
-                          style={{
-                            display: "flex",
-                            marginLeft: "30px",
-                            marginTop: "15px",
-                            opacity: "1",
-                            flexWrap: "wrap",
-                          }}
-                      >
-                        {eveningHabits[dayOfWeek]?.map((habit, index) => {
-                          const habitDetails = eveningHabitRenderer.find((item) => item.habit === habit);
-                          if(!habitDetails) {
-                            return null;
-                          }
-                          const { img, habit: habitName } = habitDetails;
-                          const isHabitClicked = clickedEveningHabitIndex[dayOfWeek]?.includes(index);
-                          const cardStyle = {
-                            background: isHabitClicked
-                                ? "linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%)"
-                                : "#212529",
-                            border: '5px solid transparent',
-                            color: 'white',
-                            width: isMobileResponsive ? "100%" : "9vw",
-                            marginBottom: isMobileResponsive ? "10px" : "0",
-                            marginRight: isMobileResponsive ? "10px" : "0",
-                            padding: "20px",
-                            borderRadius: "5px",
-                            position: "relative",
-                            marginLeft: "10px",
-                            marginTop: "10px",
-                          }
-                          const offsetIndex = index + (eveningHabits[dayOfWeek]?.length || 0);
-                          return (
-                            <div key={index} style={cardStyle} onClick={() => handleEveningCardClick(dayOfWeek, index)}>
-                              <Habit
-                                  key={offsetIndex}
-                                  cardStyle={cardStyle}
-                                  handleCardClick={handleCardClick}
-                                  dayOfWeek={dayOfWeek}
-                                  habitName={habitName}
-                                  img={img}
-                                  handlePopoverOpen={handlePopoverOpen}
-                                  handlePopoverClose={handlePopoverClose}
-                                  anchorEl={anchorEl}
-                              />
-                            </div>
-                          )
-                        })}
-                      </div>
-                  )}
-                </div>
-                <div style={{ marginTop: "10px" }}>
-                  <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#C1C2C5",
-                        justifyContent: "flex-start",
-                        marginLeft: "30px",
-                      }}
-                  >
-                    <ExpandLessIcon
-                        style={{
-                          fontSize: "15px",
-                          marginRight: "15px",
-                          borderRadius: hoverAnyTime ? "0" : "50%",
-                          transition: "transform 0.5s",
-                          transform: anyTimeEx ? "rotate(-180deg)" : "rotate(0deg)",
-                          background: hoverAnyTime
-                              ? "rgba(52, 58, 64, 0.2)"
-                              : "transparent",
-                        }}
-                        onClick={handleAnyTime}
-                        onMouseEnter={handleHoverAnyTimeEnter}
-                        onMouseLeave={handleHoverAnyTimeLeave}
-                    />
-                    <img
-                        style={{ height: "20px", width: "20px", marginRight: "10px" }}
-                        draggable="false"
-                        alt="evening"
-                        src="https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/23f0.png"
-                    />
-                    <span style={{ fontSize: "25px" }}>Any time</span>
-                    <IconButton style={{ color: '#C1C2C5', cursor: 'pointer'}} onClick={handleOpenAnyTimeDialog} >
-                      <AddIcon />
-                    </IconButton>
-                    <AddHabit
-                        open={openAnyTimeDialog}
-                        handleClose={handleCloseAnyTimeDialog}
-                        handleSubmit={handleSubmitAnyTimeDialog}
-                        habitRenderer={anyTimeHabitRenderer}
-                        handleCheckboxClick={handleAnyTimeCheckboxClick}
-                        dayOfWeek={dayOfWeek}
-                        checkedHabits={anyTimeHabits}
-                        isMobileResponsive={isMobileResponsive}
-                    />
-                  </div>
-                  {!anyTimeEx && (
-                      <div
-                          style={{
-                            display: "flex",
-                            marginLeft: "30px",
-                            marginTop: "15px",
-                            opacity: "1",
-                            flexWrap: "wrap",
-                          }}
-                      >
-                        {anyTimeHabits[dayOfWeek]?.map((habit, index) => {
-                          const habitDetails = anyTimeHabitRenderer.find((item) => item.habit === habit);
-                          if(!habitDetails) {
-                            return null;
-                          }
-                          const { img, habit: habitName } = habitDetails;
-                          const isHabitClicked = clickedAnyTimeHabitIndex[dayOfWeek]?.includes(index);
-                          const cardStyle = {
-                            background: isHabitClicked ? "linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%)" : "#212529",
-                            border: '5px solid transparent',
-                            color: 'white',
-                            width: isMobileResponsive ? '100%' : '9vw',
-                            marginBottom: isMobileResponsive ? "10px" : "0",
-                            marginRight: isMobileResponsive ? "10px" : '0',
-                            padding: '20px',
-                            borderRadius: '5px',
-                            position: 'relative',
-                            marginLeft: '10px',
-                            marginTop: '10px',
-                          }
-                          return (
-                            <div key={index} style={cardStyle} onClick={() => handleAnyTimeCardClick(dayOfWeek, index)}>
-                              <Habit dayOfWeek={dayOfWeek}
-                                     habitName={habitName}
-                                     img={img}
-                                     handlePopoverOpen={handlePopoverOpen}
-                                     handlePopoverClose={handlePopoverClose}
-                                     anchorEl={anchorEl}
-                              />
-                            </div>
-                          )
-                        })}
-                      </div>
-                  )}
-                </div>
+                <AddHabit checkedHabits={checkedHabits}
+                          hover={hover}
+                          expanded={expanded}
+                          handleExpandIconClick={handleExpandIconClick}
+                          handleHoverEnter={handleHoverEnter}
+                          handleHoverLeave={handleHoverLeave}
+                          handleOpenDialog={handleOpenMorningDialog}
+                          handleCardClick={handleCardClick}
+                          open={openMorningDialog}
+                          handleClose={handleCloseMorningDialog}
+                          handleSubmit={handleSubmitMorningDialog}
+                          habitRenderer={morningHabitRenderer}
+                          handleCheckboxClick={handleCheckboxClick}
+                          clickedIndex={clickedHabitIndex}
+                          handlePopoverOpen={handlePopoverOpen}
+                          handlePopoverClose={handlePopoverClose}
+                          anchorEl={anchorEl}
+                          dayOfWeek={dayOfWeek}
+                          isMobileResponsive={isMobileResponsive}
+                          img={images[0].src}
+                          alt={images[0].alt}
+                          partOfDay={partsOfDay[0]}
+                />
+                <AddHabit
+                    checkedHabits={afterNoonHabits}
+                    hover={hoverAfterNoon}
+                    expanded={afterNoonEx}
+                    handleExpandIconClick={handleAfterNoonExClick}
+                    handleHoverEnter={handleHoverAfterNoonEnter}
+                    handleHoverLeave={handleHoverAfterNoonLeave}
+                    handleOpenDialog={handleOpenAfterNoonDialog}
+                    handleCardClick={handleAfterNoonCardClick}
+                    open={openAfterNoonDialog}
+                    handleClose={handleCloseAfterNoonDialog}
+                    handleSubmit={handleSubmitAfterNoonDialog}
+                    habitRenderer={afterNoonHabitRenderer}
+                    handleCheckboxClick={handleAfterNoonCheckboxClick}
+                    clickedIndex={clickedAfterNoonHabitIndex}
+                    handlePopoverOpen={handlePopoverOpen}
+                    handlePopoverClose={handlePopoverClose}
+                    anchorEl={anchorEl}
+                    dayOfWeek={dayOfWeek}
+                    isMobileResponsive={isMobileResponsive}
+                    img={images[1].src}
+                    alt={images[1].alt}
+                    partOfDay={partsOfDay[1]}
+                />
+                <AddHabit
+                   checkedHabits={eveningHabits}
+                   hover={hoverEvening}
+                   expanded={eveningEx}
+                   handleExpandIconClick={handleEveningExClick}
+                   handleHoverEnter={handleHoverEveningEnter}
+                   handleHoverLeave={handleHoverEveningLeave}
+                   handleOpenDialog={handleOpenEveningDialog}
+                   handleCardClick={handleEveningCardClick}
+                   open={openEveningDialog}
+                   handleClose={handleCloseEveningDialog}
+                   handleSubmit={handleSubmitEveningDialog}
+                   habitRenderer={eveningHabitRenderer}
+                   handleCheckboxClick={handleEveningCheckboxClick}
+                   clickedIndex={clickedEveningHabitIndex}
+                   handlePopoverOpen={handlePopoverOpen}
+                   handlePopoverClose={handlePopoverClose}
+                   anchorEl={anchorEl}
+                   dayOfWeek={dayOfWeek}
+                   isMobileResponsive={isMobileResponsive}
+                   img={images[2].src}
+                   alt={images[2].alt}
+                   partOfDay={partsOfDay[2]}
+                />
+                <AddHabit
+                    checkedHabits={anyTimeHabits}
+                    hover={hoverAnyTime}
+                    expanded={anyTimeEx}
+                    handleExpandIconClick={handleAnyTimeExClick}
+                    handleHoverEnter={handleHoverAnyTimeEnter}
+                    handleHoverLeave={handleHoverAnyTimeLeave}
+                    handleOpenDialog={handleOpenAnyTimeDialog}
+                    handleCardClick={handleAnyTimeCardClick}
+                    open={openAnyTimeDialog}
+                    handleClose={handleCloseAnyTimeDialog}
+                    handleSubmit={handleSubmitAnyTimeDialog}
+                    habitRenderer={anyTimeHabitRenderer}
+                    handleCheckboxClick={handleAnyTimeCheckboxClick}
+                    clickedIndex={clickedAnyTimeHabitIndex}
+                    handlePopoverOpen={handlePopoverOpen}
+                    handlePopoverClose={handlePopoverClose}
+                    anchorEl={anchorEl}
+                    dayOfWeek={dayOfWeek}
+                    isMobileResponsive={isMobileResponsive}
+                    img={images[3].src}
+                    alt={images[3].alt}
+                    partOfDay={partsOfDay[3]}
+                />
               </div>
           )}
           {selectedTab === 1 && (
