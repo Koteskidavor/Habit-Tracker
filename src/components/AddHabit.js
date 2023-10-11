@@ -4,7 +4,8 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AddIcon from "@mui/icons-material/Add";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-const AddHabit = ({ partOfDay, hover, open, handleClose, handleSubmit, habitRenderer, handleCheckboxClick, dayOfWeek, checkedHabits, isMobileResponsive, expanded, handleExpandIconClick, handleHoverEnter, handleHoverLeave, handleOpenDialog, clickedIndex, handleCardClick, handlePopoverOpen, handlePopoverClose, anchorEl, img, alt }) => {
+const AddHabit = ({ dateKey, partOfDay, hover, open, handleClose, handleSubmit, habitRenderer, handleCheckboxClick, checkedHabits, isMobileResponsive, expanded, handleExpandIconClick, handleHoverEnter, handleHoverLeave, handleOpenDialog, clickedIndex, handleCardClick, handlePopoverOpen, handlePopoverClose, anchorEl, img, alt }) => {
+
     return (
         <div style={{ marginTop: "20px" }}>
             <div
@@ -44,7 +45,7 @@ const AddHabit = ({ partOfDay, hover, open, handleClose, handleSubmit, habitRend
                     <DialogContent style={{ background: '#c1c2c5', height: '40vh', overflowY: 'auto', }}>
                         <div style={{ display: 'flex', marginTop: '15px', height: '40vh', flexWrap: 'wrap'}}>
                             {habitRenderer.map((habit, index) => {
-                                const isSelected = checkedHabits[dayOfWeek] && checkedHabits[dayOfWeek].includes(habit.habit);
+                                const isSelected = checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit);
                                 return (
                                     <div key={index} style={{
                                         background: '#212529',
@@ -119,13 +120,13 @@ const AddHabit = ({ partOfDay, hover, open, handleClose, handleSubmit, habitRend
                         flexWrap: "wrap",
                     }}
                 >
-                    {checkedHabits[dayOfWeek]?.map((habit, index) => {
+                    {checkedHabits[dateKey]?.map((habit, index) => {
                         const habitDetails = habitRenderer.find((item) => item.habit === habit);
                         if(!habitDetails) {
                             return null;
                         }
                         const { img, habit: habitName } = habitDetails;
-                        const isHabitClicked = clickedIndex[dayOfWeek]?.includes(index);
+                        const isHabitClicked = clickedIndex[dateKey]?.includes(index);
                         const cardStyle = {
                             background: isHabitClicked
                                 ? "linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%)"
@@ -142,7 +143,7 @@ const AddHabit = ({ partOfDay, hover, open, handleClose, handleSubmit, habitRend
                             marginTop: "10px",
                         }
                         return (
-                            <div key={index} style={cardStyle} onClick={() => handleCardClick(dayOfWeek, index)}>
+                            <div key={index} style={cardStyle} onClick={() => handleCardClick(dateKey, index)}>
                                 <div style={{
                                     fontSize: '48px',
                                     display: 'flex',

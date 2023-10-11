@@ -47,7 +47,7 @@ const HabitTracker = () => {
     { src: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f307.png', alt: 'evening_emoji' },
     { src: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/23f0.png', alt: 'anyTime_emoji' },
   ]
-  const partsOfDay = ["Morning", "Afternoon", "Evening", "Afternoon", "Any Time"];
+  const partsOfDay = ["Morning", "Afternoon", "Evening", "Any Time"];
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
@@ -187,8 +187,6 @@ const HabitTracker = () => {
     { img: 'https://twemoji.maxcdn.com/v/14.0.1/72x72/1f37d.png', habit: 'Fasting for 16 hrs' },
     { img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f49a.png', habit: 'Athletic Greens' },
     { img: 'https://twemoji.maxcdn.com/v/14.0.1/72x72/1f4e7.png', habit: 'Inbox Zero'},
-    { img: 'https://twemoji.maxcdn.com/v/14.0.1/72x72/1f916.png', habit: '3+ hours of coding' },
-    { img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f4a7.png', habit: 'Bottle of water'},
     { img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/2615.png', habit: 'Coffee'},
     { img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@v14.0.1/assets/72x72/1f957.png', habit: 'Log meals for day'}
   ];
@@ -208,79 +206,52 @@ const HabitTracker = () => {
     const storedAnyTimeCheckedItems = localStorage.getItem("anyTimeCheckedItems");
     return storedAnyTimeCheckedItems ? JSON.parse(storedAnyTimeCheckedItems) : {};
   })
-  const getCurrentWeekIndex = () => {
-    const today = new Date();
-    const daysBefore = 0;
-    const startDate = new Date(today);
-    startDate.setDate(today.getDate() - daysBefore);
-
-    const timeDiff = today - startDate;
-
-    const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
-
-    const weekIndex = Math.floor(timeDiff / oneWeekInMilliseconds);
-
-    return weekIndex;
-  }
-  // const updateCheckedHabits = (weekIndex, dayOfWeek, selectedHabit) => {
-  //   setCheckedHabits((prevCheckedHabits) => {
-  //     const updatedCheckedHabits = { ...prevCheckedHabits };
-  //
-  //     if(!updatedCheckedHabits[weekIndex]) {
-  //       updatedCheckedHabits[weekIndex] = {};
-  //     }
-  //     if(!updatedCheckedHabits[weekIndex][dayOfWeek]) {
-  //       updatedCheckedHabits[weekIndex][dayOfWeek] = [];
-  //     }
-  //
-  //     const habitsForDay = updatedCheckedHabits[weekIndex][dayOfWeek];
-  //
-  //     if(habitsForDay.includes(selectedHabit.habit)) {
-  //       updatedCheckedHabits[weekIndex][dayOfWeek] = habitsForDay.filter(
-  //           (habit) => habit !== selectedHabit.habit
-  //       )
-  //     } else {
-  //       updatedCheckedHabits[weekIndex][dayOfWeek] = [
-  //           ...habitsForDay,
-  //           selectedHabit.habit,
-  //       ]
-  //     }
-  //     localStorage.setItem("morningCheckedItems", JSON.stringify(updatedCheckedHabits));
-  //     return updatedCheckedHabits;
-  //   })
-  // }
+  const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
-    const dayOfWeek = date.toLocaleString("en-US", { weekday: "short", });
+
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
-      const habitsForDay = updatedCheckedHabits[dayOfWeek] || [];
+      const habitsForDay = updatedCheckedHabits[dateKey] || [];
 
       if(habitsForDay.includes(selectedHabit.habit)) {
-        updatedCheckedHabits[dayOfWeek] = habitsForDay.filter(
+        updatedCheckedHabits[dateKey] = habitsForDay.filter(
             (habit) => habit !== selectedHabit.habit
         );
       } else {
-        updatedCheckedHabits[dayOfWeek] = [...habitsForDay, selectedHabit.habit];
+        for (let day in updatedCheckedHabits) {
+          if (day !== dateKey) {
+            updatedCheckedHabits[day] = updatedCheckedHabits[day].filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+          }
+        }
+        updatedCheckedHabits[dateKey] = [...habitsForDay, selectedHabit.habit];
       }
-      localStorage.setItem("morningCheckedItems", JSON.stringify(updatedCheckedHabits))
+      localStorage.setItem("morningCheckedItems", JSON.stringify(updatedCheckedHabits));
       return updatedCheckedHabits;
     })
   }
   const handleAfterNoonCheckboxClick = (index) => {
     const selectedHabit = afterNoonHabitRenderer[index]
-    const dayOfWeek = date.toLocaleString("en-US", { weekday: 'short' });
 
     setAfterNoonHabits((prevCheckedHabits) => {
-      const updatedCheckedHabits = {...prevCheckedHabits}
-      const habitsForDay = updatedCheckedHabits[dayOfWeek] || [];
+      const updatedCheckedHabits = { ...prevCheckedHabits };
+      const habitsForDay = updatedCheckedHabits[dateKey] || [];
 
       if(habitsForDay.includes(selectedHabit.habit)) {
-        updatedCheckedHabits[dayOfWeek] = habitsForDay.filter(
+        updatedCheckedHabits[dateKey] = habitsForDay.filter(
             (habit) => habit !== selectedHabit.habit
         );
       } else {
-        updatedCheckedHabits[dayOfWeek] = [...habitsForDay, selectedHabit.habit];
+        for (let day in updatedCheckedHabits) {
+          if (day !== dayOfMonth) {
+            updatedCheckedHabits[day] = updatedCheckedHabits[day].filter(
+                (habit) => habit !== selectedHabit.habit
+            )
+          }
+        }
+        updatedCheckedHabits[dateKey] = [...habitsForDay, selectedHabit.habit];
       }
       localStorage.setItem("afterNoonCheckedItems", JSON.stringify(updatedCheckedHabits));
       return updatedCheckedHabits;
@@ -288,17 +259,24 @@ const HabitTracker = () => {
   }
   const handleEveningCheckboxClick = (index) => {
     const selectedHabit = eveningHabitRenderer[index];
-    const dayOfWeek = date.toLocaleString("en-US", { weekday: 'short' });
 
     setEveningHabits((prevCheckedHabits) => {
-      const updatedCheckedHabits = { ...prevCheckedHabits }
-      const habitsForDay = updatedCheckedHabits[dayOfWeek] || [];
+      const updatedCheckedHabits = { ...prevCheckedHabits };
+      const habitsForDay = updatedCheckedHabits[dateKey] || [];
+
       if(habitsForDay.includes(selectedHabit.habit)) {
-        updatedCheckedHabits[dayOfWeek] = habitsForDay.filter(
+        updatedCheckedHabits[dateKey] = habitsForDay.filter(
             (habit) => habit !== selectedHabit.habit
-        );
+        )
       } else {
-        updatedCheckedHabits[dayOfWeek] = [...habitsForDay, selectedHabit.habit]
+        for (let day in updatedCheckedHabits) {
+          if (day !== dayOfMonth) {
+            updatedCheckedHabits[day] = updatedCheckedHabits[day].filter(
+                (habit) => habit !== selectedHabit.habit
+            )
+          }
+        }
+        updatedCheckedHabits[dateKey] = [...habitsForDay, selectedHabit.habit];
       }
       localStorage.setItem("eveningCheckedItems", JSON.stringify(updatedCheckedHabits));
       return updatedCheckedHabits;
@@ -306,20 +284,28 @@ const HabitTracker = () => {
   }
   const handleAnyTimeCheckboxClick = (index) => {
     const selectedHabit = anyTimeHabitRenderer[index];
-    const dayOfWeek = date.toLocaleString("en-US", { weekday: 'short' });
+
     setAnyTimeHabits((prevCheckedHabits) => {
-      const updatedCheckedHabits = {...prevCheckedHabits }
-      const habitsForDay = updatedCheckedHabits[dayOfWeek] || [];
+      const updatedCheckedHabits = { ...prevCheckedHabits };
+      const habitsForDay = updatedCheckedHabits[dateKey] || [];
+
       if(habitsForDay.includes(selectedHabit.habit)) {
-        updatedCheckedHabits[dayOfWeek] = habitsForDay.filter(
+        updatedCheckedHabits[dateKey] = habitsForDay.filter(
             (habit) => habit !== selectedHabit.habit
-        );
+        )
       } else {
-        updatedCheckedHabits[dayOfWeek] = [...habitsForDay, selectedHabit.habit]
+        for(let day in updatedCheckedHabits) {
+          if(day !== dayOfMonth) {
+            updatedCheckedHabits[day] = updatedCheckedHabits[day].filter(
+                (habit) => habit !== selectedHabit.habit
+            )
+          }
+        }
+        updatedCheckedHabits[dateKey] = [...habitsForDay, selectedHabit.habit];
       }
       localStorage.setItem("anyTimeCheckedItems", JSON.stringify(updatedCheckedHabits));
       return updatedCheckedHabits;
-    });
+    })
   }
   useEffect(() => {
     const storedMorningCheckedItems = localStorage.getItem("morningCheckedItems");
@@ -417,66 +403,6 @@ const HabitTracker = () => {
   const [clickedAnyTimeHabitIndex, setClickedAnyTimeHabitIndex] = useState(
       JSON.parse(localStorage.getItem("clickedAnyTimeHabitIndex")) || {}
   );
-  const handleHabitClick = (dayOfWeek, index) => {
-    const newClickedHabitIndex = { ...clickedHabitIndex };
-    if (newClickedHabitIndex[dayOfWeek]) {
-      const currentIndex = newClickedHabitIndex[dayOfWeek].indexOf(index)
-      if (currentIndex !== -1) {
-        newClickedHabitIndex[dayOfWeek].splice(currentIndex, 1);
-      } else {
-        newClickedHabitIndex[dayOfWeek].push(index);
-      }
-    } else {
-      newClickedHabitIndex[dayOfWeek] = [index];
-    }
-    setClickedHabitIndex(newClickedHabitIndex);
-    localStorage.setItem("clickedHabitIndex", JSON.stringify(newClickedHabitIndex));
-  }
-  const handleAfterNoonClick = (dayOfWeek, index) => {
-    const newClickedHabitIndex = { ...clickedHabitIndex };
-    if(newClickedHabitIndex[dayOfWeek]) {
-      const currentIndex = newClickedHabitIndex[dayOfWeek].indexOf(index);
-      if (currentIndex !== -1) {
-        newClickedHabitIndex[dayOfWeek].splice(currentIndex, 1);
-      } else {
-        newClickedHabitIndex[dayOfWeek].push(index);
-      }
-    } else {
-      newClickedHabitIndex[dayOfWeek] = [index];
-    }
-    setClickedAfterNoonHabitIndex(newClickedHabitIndex);
-    localStorage.setItem("clickedAfterNoonHabitIndex", JSON.stringify(newClickedHabitIndex));
-  }
-  const handleEveningClick = (dayOfWeek, index) => {
-    const newClickedHabitIndex = { ...clickedHabitIndex };
-    if (newClickedHabitIndex[dayOfWeek]) {
-      const currentIndex = newClickedHabitIndex[dayOfWeek].indexOf(index);
-      if (currentIndex !== -1) {
-        newClickedHabitIndex[dayOfWeek].splice(currentIndex, 1);
-      } else {
-        newClickedHabitIndex[dayOfWeek].push(index);
-      }
-    } else {
-      newClickedHabitIndex[dayOfWeek] = [index];
-    }
-    setClickedEveningHabitIndex(newClickedHabitIndex)
-    localStorage.setItem("clickedEveningHabitIndex", JSON.stringify(newClickedHabitIndex));
-  }
-  const handleAnyTimeClick = (dayOfWeek, index) => {
-    const newClickedHabitIndex = { ...clickedAnyTimeHabitIndex };
-    if (newClickedHabitIndex[dayOfWeek]) {
-      const currentIndex = newClickedHabitIndex[dayOfWeek].indexOf(index);
-      if (currentIndex !== -1) {
-        newClickedHabitIndex[dayOfWeek].splice(currentIndex, 1);
-      } else {
-        newClickedHabitIndex[dayOfWeek].push(index);
-      }
-    } else {
-      newClickedHabitIndex[dayOfWeek] = [index];
-    }
-    setClickedAnyTimeHabitIndex(newClickedHabitIndex);
-    localStorage.setItem("clickedAnyTimeHabitIndex", JSON.stringify(newClickedHabitIndex));
-  }
   const handleCardClick = (dayOfWeek, index) => {
     setClickedHabitIndex((prevClickedHabits) => {
       if (prevClickedHabits[dayOfWeek]?.includes(index)) {
@@ -635,11 +561,11 @@ const HabitTracker = () => {
                           handlePopoverOpen={handlePopoverOpen}
                           handlePopoverClose={handlePopoverClose}
                           anchorEl={anchorEl}
-                          dayOfWeek={dayOfWeek}
                           isMobileResponsive={isMobileResponsive}
                           img={images[0].src}
                           alt={images[0].alt}
                           partOfDay={partsOfDay[0]}
+                          dateKey={dateKey}
                 />
                 <AddHabit
                     checkedHabits={afterNoonHabits}
@@ -659,11 +585,11 @@ const HabitTracker = () => {
                     handlePopoverOpen={handlePopoverOpen}
                     handlePopoverClose={handlePopoverClose}
                     anchorEl={anchorEl}
-                    dayOfWeek={dayOfWeek}
                     isMobileResponsive={isMobileResponsive}
                     img={images[1].src}
                     alt={images[1].alt}
                     partOfDay={partsOfDay[1]}
+                    dateKey={dateKey}
                 />
                 <AddHabit
                    checkedHabits={eveningHabits}
@@ -683,11 +609,12 @@ const HabitTracker = () => {
                    handlePopoverOpen={handlePopoverOpen}
                    handlePopoverClose={handlePopoverClose}
                    anchorEl={anchorEl}
-                   dayOfWeek={dayOfWeek}
                    isMobileResponsive={isMobileResponsive}
                    img={images[2].src}
                    alt={images[2].alt}
                    partOfDay={partsOfDay[2]}
+                   dateKey={dateKey}
+
                 />
                 <AddHabit
                     checkedHabits={anyTimeHabits}
@@ -707,11 +634,11 @@ const HabitTracker = () => {
                     handlePopoverOpen={handlePopoverOpen}
                     handlePopoverClose={handlePopoverClose}
                     anchorEl={anchorEl}
-                    dayOfWeek={dayOfWeek}
                     isMobileResponsive={isMobileResponsive}
                     img={images[3].src}
                     alt={images[3].alt}
                     partOfDay={partsOfDay[3]}
+                    dateKey={dateKey}
                 />
               </div>
           )}
