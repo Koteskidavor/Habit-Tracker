@@ -128,7 +128,14 @@ const HabitTracker = () => {
     const currentDayIndex = currentDate.getDay();
     const weekDays = days
         .slice(currentDayIndex)
-        .concat(days.slice(0, currentDayIndex));
+        .concat(days.slice(0, currentDayIndex)).map((day, index) => {
+          const date = new Date();
+          date.setDate(date.getDate() + index);
+          return {
+            day,
+            dateKey: `${day}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`
+        };
+        })
     return weekDays;
   };
   const weekDays = getCurrentWeekDays();
@@ -209,7 +216,6 @@ const HabitTracker = () => {
   const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
-
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
       const habitsForDay = updatedCheckedHabits[dateKey] || [];
@@ -671,7 +677,7 @@ const HabitTracker = () => {
                                   fontWeight: "bold",
                                 }}
                             >
-                              {day}
+                              {day.day}
                             </div>
                             <div
                                 style={{
@@ -717,10 +723,10 @@ const HabitTracker = () => {
                             </div>
                           </td>
                           {weekDays.map((day, dayIndex) => {
-                            const habitsForDay = checkedHabits[day] || [];
-                            const habitsAfterNoon = afterNoonHabits[day] || [];
-                            const habitsEvening = eveningHabits[day] || [];
-                            const habitsAnyTime = anyTimeHabits[day] || [];
+                            const habitsForDay = checkedHabits[day.dateKey] || [];
+                            const habitsAfterNoon = afterNoonHabits[day.dateKey] || [];
+                            const habitsEvening = eveningHabits[day.dateKey] || [];
+                            const habitsAnyTime = anyTimeHabits[day.dateKey] || [];
                             const isHabitPresentForDay = habitsForDay.includes(item.habit);
                             const isAfterNoonForDay = habitsAfterNoon.includes(item.habit);
                             const isEveningForDay = habitsEvening.includes(item.habit);
