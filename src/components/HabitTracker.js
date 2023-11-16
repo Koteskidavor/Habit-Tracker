@@ -455,6 +455,14 @@ const HabitTracker = () => {
     }
     return mondayHabits;
   };
+  // const getNextMonday = (currentDate) => {
+  //   const dayOfWeek = currentDate.getDay();
+  //   const daysUntilMonday = (8 - dayOfWeek) % 7;
+  //   const nextMonday = new Date(currentDate);
+  //   nextMonday.setDate(currentDate.getDate() + daysUntilMonday);
+  //   return nextMonday;
+  // };
+  // console.log(getNextMonday(date));
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
@@ -463,17 +471,84 @@ const HabitTracker = () => {
       const [day, month, year] = dateKey.split("_");
       switch (habitOption) {
         case "Monday":
-          if (habitsForDay.includes(selectedHabit.habit)) {
-            updatedCheckedHabits[dateKey] = habitsForDay.filter(
-              (habit) => habit !== selectedHabit.habit
-            );
-          } else {
-            updatedCheckedHabits[dateKey] = [
-              ...habitsForDay,
-              selectedHabit.habit,
-            ];
+          if (selectedHabit.habit) {
+            const isMonday = dateKey.startsWith("Mon");
+            const updatedCheckedHabitsKeys = Object.keys(updatedCheckedHabits);
+            updatedCheckedHabitsKeys.forEach((key) => {
+              const shouldUpdate = isMonday || key.startsWith("Mon");
+              if (shouldUpdate) {
+                const habitsForDay = updatedCheckedHabits[key] || [];
+                if (habitsForDay.includes(selectedHabit.habit)) {
+                  updatedCheckedHabits[key] = habitsForDay.filter(
+                    (habit) => habit !== selectedHabit.habit
+                  );
+                } else {
+                  updatedCheckedHabits[key] = [
+                    ...habitsForDay,
+                    selectedHabit.habit,
+                  ];
+                }
+              }
+            });
+            setMondayCheckedItems(updatedCheckedHabits);
           }
-          setMondayCheckedItems(updatedCheckedHabits);
+          // if (habitsForDay.includes(selectedHabit.habit)) {
+          //   updatedCheckedHabits[dateKey] = habitsForDay.filter(
+          //     (habit) => habit !== selectedHabit.habit
+          //   );
+          // } else {
+          //   updatedCheckedHabits[dateKey] = [
+          //     ...habitsForDay,
+          //     selectedHabit.habit,
+          //   ];
+          // }
+          // if (dateKey.startsWith("Mon")) {
+          //   setMondayCheckedItems(updatedCheckedHabits);
+          // }
+
+          // different function
+
+          // const isMondayOption = habitOption === "Monday";
+          // const keysToUpdate = Object.keys(updatedCheckedHabits).filter(
+          //   (key) => {
+          //     console.log("Key:", key, "Day:", day);
+          //     return isMondayOption || day === "Mon";
+          //   }
+          // );
+          // keysToUpdate.forEach((key) => {
+          //   if (habitsForDay.includes(selectedHabit.habit)) {
+          //     updatedCheckedHabits[key] = habitsForDay.filter(
+          //       (habit) => habit !== selectedHabit.habit
+          //     );
+          //   } else {
+          //     updatedCheckedHabits[key] = [
+          //       ...habitsForDay,
+          //       selectedHabit.habit,
+          //     ];
+          //   }
+          // });
+          // const currentDate = new Date(
+          //   parseInt(year),
+          //   parseInt(month) - 1,
+          //   parseInt(day)
+          // );
+          // let nextMonday = getNextMonday(currentDate);
+          // while (nextMonday.getMonth() === currentDate.getMonth()) {
+          //   const mondayKey = `Mon_${
+          //     nextMonday.getMonth() + 1
+          //   }_${nextMonday.getDate()}_${nextMonday.getFullYear()}`;
+          //   if (habitsForDay.includes(selectedHabit.habit)) {
+          //     updatedCheckedHabits[mondayKey] = habitsForDay.filter(
+          //       (habit) => habit !== selectedHabit.habit
+          //     );
+          //   } else {
+          //     updatedCheckedHabits[mondayKey] = [
+          //       ...habitsForDay,
+          //       selectedHabit.habit,
+          //     ];
+          //   }
+          //   nextMonday.setDate(nextMonday.getDate() + 7);
+          // }
           break;
         default:
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
@@ -488,19 +563,20 @@ const HabitTracker = () => {
           }
           break;
       }
-      if (habitOption === "Monday") {
-        localStorage.setItem(
-          "mondayCheckedItems",
-          JSON.stringify(updatedCheckedHabits)
-        );
-      }
-      localStorage.setItem(
-        "morningCheckedItems",
-        JSON.stringify(updatedCheckedHabits)
-      );
+      // if (habitOption === "Monday") {
+      //   localStorage.setItem(
+      //     "mondayCheckedItems",
+      //     JSON.stringify(updatedCheckedHabits)
+      //   );
+      // }
+      // localStorage.setItem(
+      //   "morningCheckedItems",
+      //   JSON.stringify(updatedCheckedHabits)
+      // );
       return updatedCheckedHabits;
     });
   };
+  console.log(mondayCheckedItems);
   const handleAfterNoonCheckboxClick = (index) => {
     const selectedHabit = afterNoonHabitRenderer[index];
     setAfterNoonHabits((prevCheckedHabits) => {
