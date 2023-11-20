@@ -48,6 +48,7 @@ const AddHabit = ({
   const [newHabit, setNewHabit] = useState("");
   const isAddingHabitRef = useRef(false);
 
+
   const handleOptionChange = (event) => {
     setHabitOption(event.target.value);
   };
@@ -224,6 +225,8 @@ const AddHabit = ({
                       const isSelected =
                         checkedHabits[dateKey] &&
                         checkedHabits[dateKey].includes(habit.habit);
+                      const isMondayHabit = mondayHabits && mondayHabits[dateKey] && mondayHabits[dateKey].includes(habit.habit);
+                      const combinedSelection = isSelected && isMondayHabit;
                       return (
                         <div
                           key={index}
@@ -253,7 +256,7 @@ const AddHabit = ({
                               cursor: "pointer",
                             }}
                           >
-                            {isSelected && <CheckCircleIcon />}
+                            {combinedSelection && <CheckCircleIcon />}
                           </div>
                           <div
                             style={{
