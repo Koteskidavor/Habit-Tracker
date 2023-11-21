@@ -17,9 +17,11 @@ const AddHabit = ({
   targetHabitRenderer,
   selectedHabit,
   mondayHabits,
+  isMonday,
   habitOption,
   setHabitOption,
   dateKey,
+  dayKey,
   partOfDay,
   hover,
   open,
@@ -47,8 +49,16 @@ const AddHabit = ({
   const [newImg, setNewImg] = useState("");
   const [newHabit, setNewHabit] = useState("");
   const isAddingHabitRef = useRef(false);
-
-
+  let habitsKey;
+  switch(habitOption) {
+    case 'Monday':
+      habitsKey = dayKey;
+      break;
+    default:
+      habitsKey = dateKey;
+      break;
+  }
+  const habitsToRender = checkedHabits[habitsKey];
   const handleOptionChange = (event) => {
     setHabitOption(event.target.value);
   };
@@ -221,75 +231,72 @@ const AddHabit = ({
                       flexWrap: "wrap",
                     }}
                   >
-                    {habitRenderer.map((habit, index) => {
-                      const isSelected =
-                        checkedHabits[dateKey] &&
-                        checkedHabits[dateKey].includes(habit.habit);
-                      const isMondayHabit = mondayHabits && mondayHabits[dateKey] && mondayHabits[dateKey].includes(habit.habit);
-                      const combinedSelection = isSelected && isMondayHabit;
-                      return (
-                        <div
-                          key={index}
-                          style={{
-                            background: "#212529",
-                            color: "white",
-                            width: isMobileResponsive ? "100%" : "8vw",
-                            padding: "15px",
-                            borderRadius: "5px",
-                            position: "relative",
-                            margin: "5px",
-                          }}
-                        >
+                      {habitRenderer.map((habit, index) => {
+                        // const isSelected = checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit);
+                        const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (mondayHabits[dayKey] && mondayHabits[dayKey].includes(habit.habit));
+                        return (
                           <div
-                            onClick={() => handleCheckboxClick(index)}
+                            key={index}
                             style={{
-                              position: "absolute",
-                              top: "5px",
-                              right: "5px",
-                              borderRadius: "50%",
-                              width: "20px",
-                              height: "20px",
-                              background: "#C1C2C5",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              cursor: "pointer",
+                              background: "#212529",
+                              color: "white",
+                              width: isMobileResponsive ? "100%" : "8vw",
+                              padding: "15px",
+                              borderRadius: "5px",
+                              position: "relative",
+                              margin: "5px",
                             }}
                           >
-                            {combinedSelection && <CheckCircleIcon />}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "48px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <img
+                            <div
+                              onClick={() => handleCheckboxClick(index)}
                               style={{
-                                height: "20px",
+                                position: "absolute",
+                                top: "5px",
+                                right: "5px",
+                                borderRadius: "50%",
                                 width: "20px",
-                                marginRight: "10px",
-                                textAlign: "center",
+                                height: "20px",
+                                background: "#C1C2C5",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                cursor: "pointer",
                               }}
-                              draggable="false"
-                              alt="morning_emoji"
-                              src={habit.img}
-                            />
+                            >
+                              {isSelected && <CheckCircleIcon />}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "48px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <img
+                                style={{
+                                  height: "20px",
+                                  width: "20px",
+                                  marginRight: "10px",
+                                  textAlign: "center",
+                                }}
+                                draggable="false"
+                                alt="morning_emoji"
+                                src={habit.img}
+                              />
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                paddingTop: "10px",
+                                justifyContent: "center",
+                              }}
+                            >
+                              {habit.habit}
+                            </div>
                           </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              paddingTop: "10px",
-                              justifyContent: "center",
-                            }}
-                          >
-                            {habit.habit}
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                     <Button
                       style={{
                         background: "white",
@@ -410,8 +417,7 @@ const AddHabit = ({
             flexWrap: "wrap",
           }}
         >
-          {/*{checkedHabits[dateKey]?.map((habit, index) => {*/}
-          {checkedHabits[dateKey]?.map((habit, index) => {
+          {habitsToRender?.map((habit, index) => {
             const habitDetails = habitRenderer.find(
               (item) => item.habit === habit
             );

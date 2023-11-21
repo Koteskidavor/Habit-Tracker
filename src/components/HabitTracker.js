@@ -459,24 +459,44 @@ const HabitTracker = () => {
   //   nextMonday.setDate(currentDate.getDate() + daysUntilMonday);
   //   return nextMonday;
   // };
+  let day = date.getDay();
+  let newDayOfWeek = date.toLocaleString("en-US", { weekday: "short" });
+  const dayKey = `${newDayOfWeek}`;
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
-      const habitsForDay = updatedCheckedHabits[dateKey] || [];
       const [day, month, year] = dateKey.split("_");
+      // let dayKey = `${dayOfWeek}`;
+      const habitsForDay = [
+          ...updatedCheckedHabits[dateKey] || [],
+          ...updatedCheckedHabits[dayKey] || [],
+      ];
       switch (habitOption) {
         case "Monday":
-          if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            updatedCheckedHabits[dateKey] = habitsForDay.filter((habit) => habit !== selectedHabit.habit);
+          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
           } else {
-            updatedCheckedHabits[dateKey] = [
-                ...(habitsForDay || []),
-                selectedHabit ? selectedHabit.habit : "",
-            ]
+            updatedCheckedHabits[dayKey] = [
+              ...habitsForDay,
+              selectedHabit ? selectedHabit.habit : "",
+            ];
           }
-          setMondayCheckedItems(updatedCheckedHabits);
+          setMondayCheckedItems({ ...mondayCheckedItems, ...updatedCheckedHabits });
           break;
+        case "Tuesday":
+          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+          } else {
+            updatedCheckedHabits[dayKey] = [
+              ...habitsForDay,
+              selectedHabit ? selectedHabit.habit : "",
+            ];
+          }
         default:
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             updatedCheckedHabits[dateKey] = habitsForDay.filter(
@@ -490,16 +510,6 @@ const HabitTracker = () => {
           }
           break;
       }
-      // if (habitOption === "Monday") {
-      //   localStorage.setItem(
-      //     "mondayCheckedItems",
-      //     JSON.stringify(updatedCheckedHabits)
-      //   );
-      // }
-      // localStorage.setItem(
-      //   "morningCheckedItems",
-      //   JSON.stringify(updatedCheckedHabits)
-      // );
       return updatedCheckedHabits;
     });
   };
@@ -753,6 +763,7 @@ const HabitTracker = () => {
     return { dayOfMonth, nextMonth };
   }
   const isMonday = date.getDay() === 1;
+  // console.log(mondayCheckedItems);
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <div
@@ -829,92 +840,93 @@ const HabitTracker = () => {
               isMobileResponsive={isMobileResponsive}
               img={images[0].src}
               alt={images[0].alt}
+              dayKey={dayOfWeek}
               partOfDay={partsOfDay[0]}
               dateKey={dateKey}
               habitOption={habitOption}
               setHabitOption={setHabitOption}
               mondayHabits={mondayCheckedItems}
               targetHabitRenderer="morning"
-              isMonday={isMonday}
+              // isMonday={isMonday}
             />
-            <AddHabit
-              checkedHabits={afterNoonHabits}
-              hover={hoverAfterNoon}
-              expanded={afterNoonEx}
-              handleExpandIconClick={handleAfterNoonExClick}
-              handleHoverEnter={handleHoverAfterNoonEnter}
-              handleHoverLeave={handleHoverAfterNoonLeave}
-              handleOpenDialog={handleOpenAfterNoonDialog}
-              handleCardClick={handleAfterNoonCardClick}
-              open={openAfterNoonDialog}
-              handleClose={handleCloseAfterNoonDialog}
-              handleSubmit={handleSubmitAfterNoonDialog}
-              habitRenderer={afterNoonHabitRenderer}
-              setAfterNoonHabitRenderer={setAfterNoonHabitRenderer}
-              handleCheckboxClick={handleAfterNoonCheckboxClick}
-              clickedIndex={clickedAfterNoonHabitIndex}
-              handlePopoverOpen={handlePopoverOpen}
-              handlePopoverClose={handlePopoverClose}
-              anchorEl={anchorEl}
-              isMobileResponsive={isMobileResponsive}
-              img={images[1].src}
-              alt={images[1].alt}
-              partOfDay={partsOfDay[1]}
-              dateKey={dateKey}
-              targetHabitRenderer="afterNoon"
-            />
-            <AddHabit
-              checkedHabits={eveningHabits}
-              hover={hoverEvening}
-              expanded={eveningEx}
-              handleExpandIconClick={handleEveningExClick}
-              handleHoverEnter={handleHoverEveningEnter}
-              handleHoverLeave={handleHoverEveningLeave}
-              handleOpenDialog={handleOpenEveningDialog}
-              handleCardClick={handleEveningCardClick}
-              open={openEveningDialog}
-              handleClose={handleCloseEveningDialog}
-              handleSubmit={handleSubmitEveningDialog}
-              habitRenderer={eveningHabitRenderer}
-              setEveningHabitRenderer={setEveningHabitRenderer}
-              handleCheckboxClick={handleEveningCheckboxClick}
-              clickedIndex={clickedEveningHabitIndex}
-              handlePopoverOpen={handlePopoverOpen}
-              handlePopoverClose={handlePopoverClose}
-              anchorEl={anchorEl}
-              isMobileResponsive={isMobileResponsive}
-              img={images[2].src}
-              alt={images[2].alt}
-              partOfDay={partsOfDay[2]}
-              dateKey={dateKey}
-              targetHabitRenderer="evening"
-            />
-            <AddHabit
-              checkedHabits={anyTimeHabits}
-              hover={hoverAnyTime}
-              expanded={anyTimeEx}
-              handleExpandIconClick={handleAnyTimeExClick}
-              handleHoverEnter={handleHoverAnyTimeEnter}
-              handleHoverLeave={handleHoverAnyTimeLeave}
-              handleOpenDialog={handleOpenAnyTimeDialog}
-              handleCardClick={handleAnyTimeCardClick}
-              open={openAnyTimeDialog}
-              handleClose={handleCloseAnyTimeDialog}
-              handleSubmit={handleSubmitAnyTimeDialog}
-              habitRenderer={anyTimeHabitRenderer}
-              setAnyTimeHabitRenderer={setAnyTimeHabitRenderer}
-              handleCheckboxClick={handleAnyTimeCheckboxClick}
-              clickedIndex={clickedAnyTimeHabitIndex}
-              handlePopoverOpen={handlePopoverOpen}
-              handlePopoverClose={handlePopoverClose}
-              anchorEl={anchorEl}
-              isMobileResponsive={isMobileResponsive}
-              img={images[3].src}
-              alt={images[3].alt}
-              partOfDay={partsOfDay[3]}
-              dateKey={dateKey}
-              targetHabitRenderer="anyTime"
-            />
+            {/*<AddHabit*/}
+            {/*  checkedHabits={afterNoonHabits}*/}
+            {/*  hover={hoverAfterNoon}*/}
+            {/*  expanded={afterNoonEx}*/}
+            {/*  handleExpandIconClick={handleAfterNoonExClick}*/}
+            {/*  handleHoverEnter={handleHoverAfterNoonEnter}*/}
+            {/*  handleHoverLeave={handleHoverAfterNoonLeave}*/}
+            {/*  handleOpenDialog={handleOpenAfterNoonDialog}*/}
+            {/*  handleCardClick={handleAfterNoonCardClick}*/}
+            {/*  open={openAfterNoonDialog}*/}
+            {/*  handleClose={handleCloseAfterNoonDialog}*/}
+            {/*  handleSubmit={handleSubmitAfterNoonDialog}*/}
+            {/*  habitRenderer={afterNoonHabitRenderer}*/}
+            {/*  setAfterNoonHabitRenderer={setAfterNoonHabitRenderer}*/}
+            {/*  handleCheckboxClick={handleAfterNoonCheckboxClick}*/}
+            {/*  clickedIndex={clickedAfterNoonHabitIndex}*/}
+            {/*  handlePopoverOpen={handlePopoverOpen}*/}
+            {/*  handlePopoverClose={handlePopoverClose}*/}
+            {/*  anchorEl={anchorEl}*/}
+            {/*  isMobileResponsive={isMobileResponsive}*/}
+            {/*  img={images[1].src}*/}
+            {/*  alt={images[1].alt}*/}
+            {/*  partOfDay={partsOfDay[1]}*/}
+            {/*  dateKey={dateKey}*/}
+            {/*  targetHabitRenderer="afterNoon"*/}
+            {/*/>*/}
+            {/*<AddHabit*/}
+            {/*  checkedHabits={eveningHabits}*/}
+            {/*  hover={hoverEvening}*/}
+            {/*  expanded={eveningEx}*/}
+            {/*  handleExpandIconClick={handleEveningExClick}*/}
+            {/*  handleHoverEnter={handleHoverEveningEnter}*/}
+            {/*  handleHoverLeave={handleHoverEveningLeave}*/}
+            {/*  handleOpenDialog={handleOpenEveningDialog}*/}
+            {/*  handleCardClick={handleEveningCardClick}*/}
+            {/*  open={openEveningDialog}*/}
+            {/*  handleClose={handleCloseEveningDialog}*/}
+            {/*  handleSubmit={handleSubmitEveningDialog}*/}
+            {/*  habitRenderer={eveningHabitRenderer}*/}
+            {/*  setEveningHabitRenderer={setEveningHabitRenderer}*/}
+            {/*  handleCheckboxClick={handleEveningCheckboxClick}*/}
+            {/*  clickedIndex={clickedEveningHabitIndex}*/}
+            {/*  handlePopoverOpen={handlePopoverOpen}*/}
+            {/*  handlePopoverClose={handlePopoverClose}*/}
+            {/*  anchorEl={anchorEl}*/}
+            {/*  isMobileResponsive={isMobileResponsive}*/}
+            {/*  img={images[2].src}*/}
+            {/*  alt={images[2].alt}*/}
+            {/*  partOfDay={partsOfDay[2]}*/}
+            {/*  dateKey={dateKey}*/}
+            {/*  targetHabitRenderer="evening"*/}
+            {/*/>*/}
+            {/*<AddHabit*/}
+            {/*  checkedHabits={anyTimeHabits}*/}
+            {/*  hover={hoverAnyTime}*/}
+            {/*  expanded={anyTimeEx}*/}
+            {/*  handleExpandIconClick={handleAnyTimeExClick}*/}
+            {/*  handleHoverEnter={handleHoverAnyTimeEnter}*/}
+            {/*  handleHoverLeave={handleHoverAnyTimeLeave}*/}
+            {/*  handleOpenDialog={handleOpenAnyTimeDialog}*/}
+            {/*  handleCardClick={handleAnyTimeCardClick}*/}
+            {/*  open={openAnyTimeDialog}*/}
+            {/*  handleClose={handleCloseAnyTimeDialog}*/}
+            {/*  handleSubmit={handleSubmitAnyTimeDialog}*/}
+            {/*  habitRenderer={anyTimeHabitRenderer}*/}
+            {/*  setAnyTimeHabitRenderer={setAnyTimeHabitRenderer}*/}
+            {/*  handleCheckboxClick={handleAnyTimeCheckboxClick}*/}
+            {/*  clickedIndex={clickedAnyTimeHabitIndex}*/}
+            {/*  handlePopoverOpen={handlePopoverOpen}*/}
+            {/*  handlePopoverClose={handlePopoverClose}*/}
+            {/*  anchorEl={anchorEl}*/}
+            {/*  isMobileResponsive={isMobileResponsive}*/}
+            {/*  img={images[3].src}*/}
+            {/*  alt={images[3].alt}*/}
+            {/*  partOfDay={partsOfDay[3]}*/}
+            {/*  dateKey={dateKey}*/}
+            {/*  targetHabitRenderer="anyTime"*/}
+            {/*/>*/}
           </div>
         )}
         {selectedTab === 1 && (
