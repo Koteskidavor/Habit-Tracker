@@ -6,12 +6,10 @@ import {
   DialogActions,
   Button,
   IconButton,
-  Popover,
 } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AddIcon from "@mui/icons-material/Add";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const AddHabit = ({
   targetHabitRenderer,
@@ -232,8 +230,7 @@ const AddHabit = ({
                     }}
                   >
                       {habitRenderer.map((habit, index) => {
-                        // const isSelected = checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit);
-                        const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (mondayHabits[dayKey] && mondayHabits[dayKey].includes(habit.habit));
+                        const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[dayKey] && checkedHabits[dayKey].includes(habit.habit));
                         return (
                           <div
                             key={index}
@@ -319,7 +316,7 @@ const AddHabit = ({
                   <label>
                     Monday
                     <input
-                      type="radio"
+                      type="checkbox"
                       value="Monday"
                       checked={habitOption === "Monday"}
                       onChange={handleOptionChange}
@@ -328,7 +325,7 @@ const AddHabit = ({
                   <label>
                     Tuesday
                     <input
-                      type="radio"
+                      type="checkbox"
                       value="Tuesday"
                       checked={habitOption === "Tuesday"}
                       onChange={handleOptionChange}
@@ -337,7 +334,7 @@ const AddHabit = ({
                   <label>
                     Wednesday
                     <input
-                      type="radio"
+                      type="checkbox"
                       value="Wednesday"
                       checked={habitOption === "Wednesday"}
                       onChange={handleOptionChange}
@@ -346,7 +343,7 @@ const AddHabit = ({
                   <label>
                     Thursday
                     <input
-                      type="radio"
+                      type="checkbox"
                       value="Thursday"
                       checked={habitOption === "Thursday"}
                       onChange={handleOptionChange}
@@ -355,7 +352,7 @@ const AddHabit = ({
                   <label>
                     Friday
                     <input
-                      type="radio"
+                      type="checkbox"
                       value="Friday"
                       checked={habitOption === "Friday"}
                       onChange={handleOptionChange}
@@ -364,7 +361,7 @@ const AddHabit = ({
                   <label>
                     Saturday
                     <input
-                      type="radio"
+                      type="checkbox"
                       value="Saturday"
                       checked={habitOption === "Saturday"}
                       onChange={handleOptionChange}
@@ -373,7 +370,7 @@ const AddHabit = ({
                   <label>
                     Sunday
                     <input
-                      type="radio"
+                      type="checkbox"
                       value="Sunday"
                       checked={habitOption === "Sunday"}
                       onChange={handleOptionChange}

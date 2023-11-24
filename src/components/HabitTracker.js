@@ -42,8 +42,6 @@ const HabitTracker = () => {
   const [openEveningDialog, setOpenEveningDialog] = useState(false);
   const [openAnyTimeDialog, setOpenAnyTimeDialog] = useState(false);
   const [habitOption, setHabitOption] = useState("Everyday");
-  const [updatedHabits, setUpdatedHabits] = useState([]);
-  const [updatedAHabits, setUpdatedAHabits] = useState([]);
   const [habitsChanged, setHabitsChanged] = useState(false);
   const currentDate = new Date();
 
@@ -414,10 +412,6 @@ const HabitTracker = () => {
       ? JSON.parse(storedMorningCheckedItems)
       : {};
   });
-  const [mondayCheckedItems, setMondayCheckedItems] = useState(() => {
-    const storedMondayCheckedItems = localStorage.getItem("mondayCheckedItems");
-    return storedMondayCheckedItems ? JSON.parse(storedMondayCheckedItems) : {};
-  });
   const [afterNoonHabits, setAfterNoonHabits] = useState(() => {
     const storedAfterNoonCheckedItems = localStorage.getItem(
       "afterNoonCheckedItems"
@@ -443,50 +437,40 @@ const HabitTracker = () => {
       : {};
   });
   const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
-  // const filterMondayHabits = (checkedItems) => {
-  //   const mondayHabits = {};
-  //   for (const key in checkedItems) {
-  //     if (key.startsWith("Mon")) {
-  //       mondayHabits[key] = checkedItems[key];
-  //     }
-  //   }
-  //   return mondayHabits;
-  // };
-  // const getNextMonday = (currentDate) => {
-  //   const dayOfWeek = currentDate.getDay();
-  //   const daysUntilMonday = (8 - dayOfWeek) % 7;
-  //   const nextMonday = new Date(currentDate);
-  //   nextMonday.setDate(currentDate.getDate() + daysUntilMonday);
-  //   return nextMonday;
-  // };
-  let day = date.getDay();
-  let newDayOfWeek = date.toLocaleString("en-US", { weekday: "short" });
-  const dayKey = `${newDayOfWeek}`;
+  let dayKey = `${dayOfWeek}`;
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
-      const [day, month, year] = dateKey.split("_");
-      // let dayKey = `${dayOfWeek}`;
       const habitsForDay = [
           ...updatedCheckedHabits[dateKey] || [],
           ...updatedCheckedHabits[dayKey] || [],
       ];
+      let newDate = new Date();
+      let day = newDate.getDay();
+      let diff;
       switch (habitOption) {
         case "Monday":
+          diff = (day < 1) ? 1 - day : 8 - day;
+          newDate.setDate(newDate.getDate() + diff);
+          dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             updatedCheckedHabits[dayKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
             );
           } else {
-            updatedCheckedHabits[dayKey] = [
-              ...habitsForDay,
-              selectedHabit ? selectedHabit.habit : "",
-            ];
+              if(!updatedCheckedHabits[dayKey].includes(selectedHabit.habit)) {
+                updatedCheckedHabits[dayKey] = [
+                  ...habitsForDay,
+                  selectedHabit ? selectedHabit.habit : "",
+                ]
+              }
           }
-          setMondayCheckedItems({ ...mondayCheckedItems, ...updatedCheckedHabits });
           break;
         case "Tuesday":
+          diff = (day < 2) ? 2 - day : 9 - day;
+          newDate.setDate(newDate.getDate() + diff);
+          dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             updatedCheckedHabits[dayKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
@@ -513,6 +497,7 @@ const HabitTracker = () => {
       return updatedCheckedHabits;
     });
   };
+  console.log(checkedHabits)
   const handleAfterNoonCheckboxClick = (index) => {
     const selectedHabit = afterNoonHabitRenderer[index];
     setAfterNoonHabits((prevCheckedHabits) => {
@@ -840,12 +825,11 @@ const HabitTracker = () => {
               isMobileResponsive={isMobileResponsive}
               img={images[0].src}
               alt={images[0].alt}
-              dayKey={dayOfWeek}
+              dayKey={dayKey}
               partOfDay={partsOfDay[0]}
               dateKey={dateKey}
               habitOption={habitOption}
               setHabitOption={setHabitOption}
-              mondayHabits={mondayCheckedItems}
               targetHabitRenderer="morning"
               // isMonday={isMonday}
             />
