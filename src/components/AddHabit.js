@@ -58,7 +58,9 @@ const AddHabit = ({
   }
   const habitsToRender = checkedHabits[habitsKey];
   const handleOptionChange = (event) => {
-    setHabitOption(event.target.value);
+    const selectedOption = event.target.value;
+
+    setHabitOption((prevOption) => (prevOption === selectedOption ? null : selectedOption));
   };
   const handleAddNewHabitClick = () => {
     if (
