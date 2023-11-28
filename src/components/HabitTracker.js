@@ -456,11 +456,11 @@ const HabitTracker = () => {
           newDate.setDate(newDate.getDate() + diff);
           const newDayKey = newDate.toLocaleString("en-US", { weekday: "short" });
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+            updatedCheckedHabits[newDayKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
             );
           } else {
-              updatedCheckedHabits[dayKey] = [
+              updatedCheckedHabits[newDayKey] = [
                 ...habitsForDay,
                 selectedHabit ? selectedHabit.habit : "",
               ];
