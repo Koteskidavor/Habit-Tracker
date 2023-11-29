@@ -438,7 +438,9 @@ const HabitTracker = () => {
   });
   const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
   // dayKey setup
-  let dayKey = `${dayOfWeek}`;
+
+  // let dayKey = `${dayOfWeek}`;
+  let dayKey = '';
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
@@ -470,17 +472,17 @@ const HabitTracker = () => {
         case "Tuesday":
           diff = (day < 2) ? 2 - day : 9 - day;
           newDate.setDate(newDate.getDate() + diff);
-          dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            updatedCheckedHabits[dayKey] = habitsForDay.filter(
-                (habit) => habit !== selectedHabit.habit
-            );
-          } else {
-            updatedCheckedHabits[dayKey] = [
-              ...habitsForDay,
-              selectedHabit ? selectedHabit.habit : "",
-            ];
-          }
+          // dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+          // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+          //   updatedCheckedHabits[dayKey] = habitsForDay.filter(
+          //       (habit) => habit !== selectedHabit.habit
+          //   );
+          // } else {
+          //   updatedCheckedHabits[dayKey] = [
+          //     ...habitsForDay,
+          //     selectedHabit ? selectedHabit.habit : "",
+          //   ];
+          // }
           break;
         default:
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
@@ -498,7 +500,7 @@ const HabitTracker = () => {
       return updatedCheckedHabits;
     });
   };
-  console.log(checkedHabits);
+  // console.log(checkedHabits);
   const handleAfterNoonCheckboxClick = (index) => {
     const selectedHabit = afterNoonHabitRenderer[index];
     setAfterNoonHabits((prevCheckedHabits) => {
@@ -826,7 +828,7 @@ const HabitTracker = () => {
               isMobileResponsive={isMobileResponsive}
               img={images[0].src}
               alt={images[0].alt}
-              dayKey={dayKey}
+              // dayKey={dayKey}
               partOfDay={partsOfDay[0]}
               dateKey={dateKey}
               habitOption={habitOption}
