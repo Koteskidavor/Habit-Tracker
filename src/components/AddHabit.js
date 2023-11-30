@@ -54,7 +54,6 @@ const AddHabit = ({
       break;
     default:
       habitsKey = dateKey;
-      console.log(habitsKey)
       break;
   }
   const habitsToRender = checkedHabits[habitsKey];
@@ -234,8 +233,6 @@ const AddHabit = ({
                   >
                       {habitRenderer.map((habit, index) => {
                         const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[dayKey] && checkedHabits[dayKey].includes(habit.habit));
-                        // const isSelected = checkedHabits[habitsKey] && checkedHabits[habitsKey].includes(habit.habit);
-                        console.log(isSelected);
                         return (
                           <div
                             key={index}
