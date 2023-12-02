@@ -233,8 +233,7 @@ const AddHabit = ({
                     }}
                   >
                       {habitRenderer.map((habit, index) => {
-                        const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit));
-                        // const isSelected = (checkedHabits[dateKey]?.includes(habit.habit) && !newDayKey) || (checkedHabits[newDayKey]?.includes(habit.habit) && newDayKey);
+                        const isSelected = ((checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit)));
                         return (
                           <div
                             key={index}
