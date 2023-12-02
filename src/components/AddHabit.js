@@ -19,7 +19,7 @@ const AddHabit = ({
   habitOption,
   setHabitOption,
   dateKey,
-  dayKey,
+  newDayKey,
   partOfDay,
   hover,
   open,
@@ -50,13 +50,14 @@ const AddHabit = ({
   let habitsKey;
   switch(habitOption) {
     case 'Monday':
-      habitsKey = dayKey;
+      habitsKey = newDayKey;
       break;
     default:
       habitsKey = dateKey;
       break;
   }
   const habitsToRender = checkedHabits[habitsKey];
+  const habitsToRenderNewDayKey = checkedHabits[newDayKey];
   const handleOptionChange = (event) => {
     const selectedOption = event.target.value;
 
@@ -232,7 +233,8 @@ const AddHabit = ({
                     }}
                   >
                       {habitRenderer.map((habit, index) => {
-                        const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[dayKey] && checkedHabits[dayKey].includes(habit.habit));
+                        const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit));
+                        // const isSelected = (checkedHabits[dateKey]?.includes(habit.habit) && !newDayKey) || (checkedHabits[newDayKey]?.includes(habit.habit) && newDayKey);
                         return (
                           <div
                             key={index}

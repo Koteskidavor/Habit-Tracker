@@ -437,15 +437,13 @@ const HabitTracker = () => {
       : {};
   });
   const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
-  let dayKey = '';
-  // const [newDayKey, setNewDayKey] = useState('');
+  const [newDayKey, setNewDayKey] = useState(null);
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
       const habitsForDay = [
           ...updatedCheckedHabits[dateKey] || [],
-          ...updatedCheckedHabits[dayKey] || [],
       ];
       let newDate = new Date();
       let day = newDate.getDay();
@@ -454,7 +452,7 @@ const HabitTracker = () => {
         case "Monday":
           diff = (day < 1) ? 1 - day : 8 - day;
           newDate.setDate(newDate.getDate() + diff);
-          const newDayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+          setNewDayKey(newDate.toLocaleString("en-US", { weekday: "short" }));
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             updatedCheckedHabits[newDayKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
@@ -498,7 +496,7 @@ const HabitTracker = () => {
       return updatedCheckedHabits;
     });
   };
-  console.log(checkedHabits);
+  // console.log(checkedHabits);
   const handleAfterNoonCheckboxClick = (index) => {
     const selectedHabit = afterNoonHabitRenderer[index];
     setAfterNoonHabits((prevCheckedHabits) => {
@@ -748,8 +746,6 @@ const HabitTracker = () => {
     }
     return { dayOfMonth, nextMonth };
   }
-  const isMonday = date.getDay() === 1;
-  // console.log(mondayCheckedItems);
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <div
@@ -826,13 +822,12 @@ const HabitTracker = () => {
               isMobileResponsive={isMobileResponsive}
               img={images[0].src}
               alt={images[0].alt}
-              dayKey={dayKey}
+              newDayKey={newDayKey}
               partOfDay={partsOfDay[0]}
               dateKey={dateKey}
               habitOption={habitOption}
               setHabitOption={setHabitOption}
               targetHabitRenderer="morning"
-              // isMonday={isMonday}
             />
             {/*<AddHabit*/}
             {/*  checkedHabits={afterNoonHabits}*/}
