@@ -47,17 +47,17 @@ const AddHabit = ({
   const [newImg, setNewImg] = useState("");
   const [newHabit, setNewHabit] = useState("");
   const isAddingHabitRef = useRef(false);
-  let habitsKey;
-  switch(habitOption) {
-    case 'Monday':
-      habitsKey = newDayKey;
-      break;
-    default:
-      habitsKey = dateKey;
-      break;
-  }
-  const habitsToRender = checkedHabits[habitsKey];
-  const habitsToRenderNewDayKey = checkedHabits[newDayKey];
+  // let habitsKey;
+  // switch(habitOption) {
+  //   case 'Monday':
+  //     habitsKey = newDayKey;
+  //     break;
+  //   default:
+  //     habitsKey = dateKey;
+  //     break;
+  // }
+  // const habitsToRender = checkedHabits[habitsKey];
+  // const habitsToRenderNewDayKey = checkedHabits[newDayKey];
   const handleOptionChange = (event) => {
     const selectedOption = event.target.value;
 
@@ -234,9 +234,11 @@ const AddHabit = ({
                   >
                       {habitRenderer.map((habit, index) => {
                         // const isSelected = ((checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit)));
-                        // const isSelected = ((checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit)));
+                        const isSelected = ((checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit)));
                         // const isSelected = checkedHabits[dateKey]?.includes(habit.habit) || (newDayKey && checkedHabits[newDayKey]?.includes(habit.habit));
-                        const isSelected = checkedHabits[newDayKey]?.includes(habit.habit);
+                        // const isSelected = checkedHabits[dateKey]?.includes(habit.habit);
+                        // const isSelected = checkedHabits[newDayKey]?.includes(habit.habit);
+                        // console.log(checkedHabits[newDayKey])
                         return (
                           <div
                             key={index}
@@ -420,7 +422,7 @@ const AddHabit = ({
             flexWrap: "wrap",
           }}
         >
-          {habitsToRender?.map((habit, index) => {
+          {habitRenderer?.map((habit, index) => {
             const habitDetails = habitRenderer.find(
                 (item) => item.habit === habit
             );

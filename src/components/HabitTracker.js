@@ -459,66 +459,45 @@ const HabitTracker = () => {
           diff = day < 1 ? 1 - day : 8 - day;
           newDate.setDate(newDate.getDate() + diff);
           newDayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+          // newDayKey = "Mon";
           setNewDayKey(newDayKey);
-          // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-          //   const updatedHabitsForDay = habitsForDay.filter(
-          //       (habit) => habit !== selectedHabit.habit
-          //   );
-          //   updatedCheckedHabits[dateKey] = updatedHabitsForDay;
-          //   updatedCheckedHabits[newDayKey] = updatedHabitsForDay;
-          // } else {
-          //   updatedCheckedHabits[dateKey] = habitsForDay.filter(
-          //       (habit) => habit !== selectedHabit.habit
-          //   );
-          //   updatedCheckedHabits[newDayKey] = [
-          //     ...(updatedCheckedHabits[newDayKey] || []),
-          //     selectedHabit ? selectedHabit.habit : "",
-          //   ];
-          // }
+
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             const updatedHabitsForDay = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
-            )
-            // updatedCheckedHabits[dateKey] = updatedHabitsForDay;
-            if (newDayKey) {
-              updatedCheckedHabits[newDayKey] = updatedHabitsForDay;
+            );
+            if(newDayKey) {
+              updatedHabitsForDay[newDayKey] = updatedHabitsForDay;
             }
           } else {
-            // updatedCheckedHabits[dateKey] = habitsForDay.filter(
-            //     (habit) => habit !== selectedHabit.habit
-            // );
-            if(newDayKey) {
+            if (newDayKey) {
               updatedCheckedHabits[newDayKey] = [
                   ...(updatedCheckedHabits[newDayKey] || []),
                   selectedHabit ? selectedHabit.habit : "",
               ]
             }
           }
-          break;
-        case "Tuesday":
-          // diff = (day < 2) ? 2 - day : 9 - day;
-          // newDate.setDate(newDate.getDate() + diff);
-          // newDayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-          // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+          // if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
           //   updatedCheckedHabits[newDayKey] = habitsForDay.filter(
           //       (habit) => habit !== selectedHabit.habit
           //   );
           // } else {
           //   updatedCheckedHabits[newDayKey] = [
-          //     ...habitsForDay,
-          //     selectedHabit ? selectedHabit.habit : "",
+          //       ...habitsForDay,
+          //       selectedHabit ? selectedHabit.habit : "",
           //   ];
+          //   updatedCheckedHabits[dateKey] = updatedCheckedHabits[newDayKey];
           // }
           break;
         default:
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             updatedCheckedHabits[dateKey] = habitsForDay.filter(
-              (habit) => habit !== selectedHabit.habit
+                (habit) => habit !== selectedHabit.habit
             );
           } else {
             updatedCheckedHabits[dateKey] = [
-              ...habitsForDay,
-              selectedHabit ? selectedHabit.habit : "",
+                ...habitsForDay,
+                selectedHabit ? selectedHabit.habit : "",
             ];
           }
           break;
@@ -526,6 +505,7 @@ const HabitTracker = () => {
       return updatedCheckedHabits;
     });
   };
+  console.log(checkedHabits);
   const handleAfterNoonCheckboxClick = (index) => {
     const selectedHabit = afterNoonHabitRenderer[index];
     setAfterNoonHabits((prevCheckedHabits) => {
