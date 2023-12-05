@@ -436,13 +436,13 @@ const HabitTracker = () => {
       ? JSON.parse(storedAnyTimeCheckedItems)
       : {};
   });
-  const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
-  const [newDayKey, setNewDayKey] = useState(null);
   // let newDate = new Date();
   // let day = newDate.getDay();
   // let diff;
   // diff = day < 1 ? 1 - day : 8 - day;
   // newDate.setDate(newDate.getDate() + diff);
+  const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
+  const [newDayKey, setNewDayKey] = useState(null);
   const handleCheckboxClick = (index) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
@@ -453,27 +453,47 @@ const HabitTracker = () => {
       let newDate = new Date();
       let day = newDate.getDay();
       let diff;
+      let newDayKey;
       switch (habitOption) {
         case "Monday":
           diff = day < 1 ? 1 - day : 8 - day;
           newDate.setDate(newDate.getDate() + diff);
-          const newDayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+          newDayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+          setNewDayKey(newDayKey);
+          // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+          //   const updatedHabitsForDay = habitsForDay.filter(
+          //       (habit) => habit !== selectedHabit.habit
+          //   );
+          //   updatedCheckedHabits[dateKey] = updatedHabitsForDay;
+          //   updatedCheckedHabits[newDayKey] = updatedHabitsForDay;
+          // } else {
+          //   updatedCheckedHabits[dateKey] = habitsForDay.filter(
+          //       (habit) => habit !== selectedHabit.habit
+          //   );
+          //   updatedCheckedHabits[newDayKey] = [
+          //     ...(updatedCheckedHabits[newDayKey] || []),
+          //     selectedHabit ? selectedHabit.habit : "",
+          //   ];
+          // }
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             const updatedHabitsForDay = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
-            );
-            updatedCheckedHabits[dateKey] = updatedHabitsForDay;
-            updatedCheckedHabits[newDayKey] = updatedHabitsForDay;
+            )
+            // updatedCheckedHabits[dateKey] = updatedHabitsForDay;
+            if (newDayKey) {
+              updatedCheckedHabits[newDayKey] = updatedHabitsForDay;
+            }
           } else {
-            updatedCheckedHabits[dateKey] = habitsForDay.filter(
-                (habit) => habit !== selectedHabit.habit
-            );
-            updatedCheckedHabits[newDayKey] = [
-              ...(updatedCheckedHabits[newDayKey] || []),
-              selectedHabit ? selectedHabit.habit : "",
-            ];
+            // updatedCheckedHabits[dateKey] = habitsForDay.filter(
+            //     (habit) => habit !== selectedHabit.habit
+            // );
+            if(newDayKey) {
+              updatedCheckedHabits[newDayKey] = [
+                  ...(updatedCheckedHabits[newDayKey] || []),
+                  selectedHabit ? selectedHabit.habit : "",
+              ]
+            }
           }
-          setNewDayKey(newDayKey);
           break;
         case "Tuesday":
           // diff = (day < 2) ? 2 - day : 9 - day;
