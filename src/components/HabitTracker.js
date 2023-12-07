@@ -42,6 +42,8 @@ const HabitTracker = () => {
   const [openEveningDialog, setOpenEveningDialog] = useState(false);
   const [openAnyTimeDialog, setOpenAnyTimeDialog] = useState(false);
   const [habitOption, setHabitOption] = useState("Everyday");
+  const [updatedHabits, setUpdatedHabits] = useState([]);
+  const [updatedAHabits, setUpdatedAHabits] = useState([]);
   const [habitsChanged, setHabitsChanged] = useState(false);
   const currentDate = new Date();
 
@@ -412,6 +414,10 @@ const HabitTracker = () => {
       ? JSON.parse(storedMorningCheckedItems)
       : {};
   });
+  const [mondayCheckedItems, setMondayCheckedItems] = useState(() => {
+    const storedMondayCheckedItems = localStorage.getItem("mondayCheckedItems");
+    return storedMondayCheckedItems ? JSON.parse(storedMondayCheckedItems) : {};
+  });
   const [afterNoonHabits, setAfterNoonHabits] = useState(() => {
     const storedAfterNoonCheckedItems = localStorage.getItem(
       "afterNoonCheckedItems"
@@ -436,76 +442,77 @@ const HabitTracker = () => {
       ? JSON.parse(storedAnyTimeCheckedItems)
       : {};
   });
-  // let newDate = new Date();
-  // let day = newDate.getDay();
-  // let diff;
-  // diff = day < 1 ? 1 - day : 8 - day;
-  // newDate.setDate(newDate.getDate() + diff);
   const dateKey = `${dayOfWeek}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
-  const [newDayKey, setNewDayKey] = useState(null);
-  const handleCheckboxClick = (index) => {
-    const selectedHabit = morningHabitRenderer[index];
-    setCheckedHabits((prevCheckedHabits) => {
-      const updatedCheckedHabits = { ...prevCheckedHabits };
-      const habitsForDay = [
-          ...updatedCheckedHabits[dateKey] || [],
-      ];
-      let newDate = new Date();
-      let day = newDate.getDay();
-      let diff;
-      let newDayKey;
-      switch (habitOption) {
-        case "Monday":
-          diff = day < 1 ? 1 - day : 8 - day;
-          newDate.setDate(newDate.getDate() + diff);
-          newDayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-          // newDayKey = "Mon";
-          setNewDayKey(newDayKey);
-
-          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            const updatedHabitsForDay = habitsForDay.filter(
-                (habit) => habit !== selectedHabit.habit
-            );
-            if(newDayKey) {
-              updatedHabitsForDay[newDayKey] = updatedHabitsForDay;
-            }
-          } else {
-            if (newDayKey) {
-              updatedCheckedHabits[newDayKey] = [
-                  ...(updatedCheckedHabits[newDayKey] || []),
-                  selectedHabit ? selectedHabit.habit : "",
-              ]
-            }
-          }
-          // if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-          //   updatedCheckedHabits[newDayKey] = habitsForDay.filter(
-          //       (habit) => habit !== selectedHabit.habit
-          //   );
-          // } else {
-          //   updatedCheckedHabits[newDayKey] = [
-          //       ...habitsForDay,
-          //       selectedHabit ? selectedHabit.habit : "",
-          //   ];
-          //   updatedCheckedHabits[dateKey] = updatedCheckedHabits[newDayKey];
-          // }
-          break;
-        default:
-          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            updatedCheckedHabits[dateKey] = habitsForDay.filter(
-                (habit) => habit !== selectedHabit.habit
-            );
-          } else {
-            updatedCheckedHabits[dateKey] = [
-                ...habitsForDay,
-                selectedHabit ? selectedHabit.habit : "",
+  let dayKey = date.toLocaleString("en-US", { weekday: "short" });
+  const handleCheckboxClick = (index)=> {
+        const selectedHabit = morningHabitRenderer[index];
+        setCheckedHabits((prevCheckedHabits) => {
+            const updatedCheckedHabits = { ...prevCheckedHabits };
+            const habitsForDay = [
+                ...updatedCheckedHabits[dateKey] || [],
+                ...updatedCheckedHabits[dayKey] || [],
             ];
-          }
-          break;
-      }
-      return updatedCheckedHabits;
-    });
+            let newDate = new Date();
+            let day = newDate.getDay();
+            let diff;
+            switch (habitOption) {
+                case "Monday":
+                  if(!updatedCheckedHabits[dayKey]) {
+                    diff = (day < 1) ? 1 - day : 8 - day;
+                    newDate.setDate(newDate.getDate() + diff);
+                    dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+                  }
+                  if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+                    updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                        (habit) => habit !== selectedHabit.habit
+                    );
+                    updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                        (habit) => habit !== selectedHabit.habit
+                    );
+                  } else {
+                    updatedCheckedHabits[dayKey] = [
+                      ...(updatedCheckedHabits[dayKey] || []),
+                      selectedHabit.habit,
+                    ];
+                    updatedCheckedHabits[dateKey] = [
+                      ...(updatedCheckedHabits[dateKey] || []),
+                      selectedHabit.habit,
+                    ];
+                  }
+                    break;
+                // case "Tuesday":
+                //     day = newDate.getDay();
+                //     diff = (day <= 2) ? 2 - day : 9 - day;
+                //     newDate.setDate(newDate.getDate() + diff);
+                //     dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+                //     if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+                //         updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                //             (habit) => habit !== selectedHabit.habit
+                //         );
+                //     } else {
+                //         updatedCheckedHabits[dayKey] = [
+                //             ...habitsForDay,
+                //             selectedHabit ? selectedHabit.habit : "",
+                //         ];
+                //     }
+                //     break;
+                default:
+                    if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+                        updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                            (habit) => habit !== selectedHabit.habit
+                        );
+                    } else {
+                        updatedCheckedHabits[dateKey] = [
+                            ...habitsForDay,
+                            selectedHabit ? selectedHabit.habit : "",
+                        ];
+                    }
+                    break;
+            }
+          // localStorage.setItem("morningCheckedItems", JSON.stringify(updatedCheckedHabits));
+          return updatedCheckedHabits;
+        });
   };
-  console.log(checkedHabits);
   const handleAfterNoonCheckboxClick = (index) => {
     const selectedHabit = afterNoonHabitRenderer[index];
     setAfterNoonHabits((prevCheckedHabits) => {
@@ -755,6 +762,8 @@ const HabitTracker = () => {
     }
     return { dayOfMonth, nextMonth };
   }
+  const isMonday = date.getDay() === 1;
+  // console.log(mondayCheckedItems);
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <div
@@ -831,12 +840,14 @@ const HabitTracker = () => {
               isMobileResponsive={isMobileResponsive}
               img={images[0].src}
               alt={images[0].alt}
-              newDayKey={newDayKey}
+              dayKey={dayKey}
               partOfDay={partsOfDay[0]}
               dateKey={dateKey}
               habitOption={habitOption}
               setHabitOption={setHabitOption}
+              mondayHabits={mondayCheckedItems}
               targetHabitRenderer="morning"
+              // isMonday={isMonday}
             />
             {/*<AddHabit*/}
             {/*  checkedHabits={afterNoonHabits}*/}

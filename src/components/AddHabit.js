@@ -6,10 +6,12 @@ import {
   DialogActions,
   Button,
   IconButton,
+  Popover,
 } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AddIcon from "@mui/icons-material/Add";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const AddHabit = ({
   targetHabitRenderer,
@@ -19,7 +21,7 @@ const AddHabit = ({
   habitOption,
   setHabitOption,
   dateKey,
-  newDayKey,
+  dayKey,
   partOfDay,
   hover,
   open,
@@ -50,18 +52,20 @@ const AddHabit = ({
   // let habitsKey;
   // switch(habitOption) {
   //   case 'Monday':
-  //     habitsKey = newDayKey;
+  //     habitsKey = dayKey;
   //     break;
   //   default:
-  //     habitsKey = dateKey;
+  //     habitsKey = dateKey || dayKey;
   //     break;
   // }
   // const habitsToRender = checkedHabits[habitsKey];
-  // const habitsToRenderNewDayKey = checkedHabits[newDayKey];
+  const habitsToRender = checkedHabits[dateKey] || checkedHabits[dayKey];
   const handleOptionChange = (event) => {
-    const selectedOption = event.target.value;
-
-    setHabitOption((prevOption) => (prevOption === selectedOption ? null : selectedOption));
+    if(habitOption === event.target.value) {
+      setHabitOption('');
+    } else {
+      setHabitOption(event.target.value);
+    }
   };
   const handleAddNewHabitClick = () => {
     if (
@@ -233,12 +237,8 @@ const AddHabit = ({
                     }}
                   >
                       {habitRenderer.map((habit, index) => {
-                        // const isSelected = ((checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit)));
-                        const isSelected = ((checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[newDayKey] && checkedHabits[newDayKey].includes(habit.habit)));
-                        // const isSelected = checkedHabits[dateKey]?.includes(habit.habit) || (newDayKey && checkedHabits[newDayKey]?.includes(habit.habit));
-                        // const isSelected = checkedHabits[dateKey]?.includes(habit.habit);
-                        // const isSelected = checkedHabits[newDayKey]?.includes(habit.habit);
-                        // console.log(checkedHabits[newDayKey])
+                        // const isSelected = checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit);
+                        const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[dayKey] && checkedHabits[dayKey].includes(habit.habit));
                         return (
                           <div
                             key={index}
@@ -256,7 +256,7 @@ const AddHabit = ({
                               onClick={() => handleCheckboxClick(index)}
                               style={{
                                 position: "absolute",
-                                top: "5px",
+                                top: "5px"  ,
                                 right: "5px",
                                 borderRadius: "50%",
                                 width: "20px",
@@ -422,9 +422,9 @@ const AddHabit = ({
             flexWrap: "wrap",
           }}
         >
-          {habitRenderer?.map((habit, index) => {
+          {habitsToRender?.map((habit, index) => {
             const habitDetails = habitRenderer.find(
-                (item) => item.habit === habit
+              (item) => item.habit === habit
             );
             if (!habitDetails) {
               return null;
@@ -433,8 +433,8 @@ const AddHabit = ({
             const isHabitClicked = clickedIndex[dateKey]?.includes(index);
             const cardStyle = {
               background: isHabitClicked
-                  ? "linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%)"
-                  : "#212529",
+                ? "linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%)"
+                : "#212529",
               border: "5px solid transparent",
               color: "white",
               width: isMobileResponsive ? "100%" : "9vw",
@@ -447,57 +447,57 @@ const AddHabit = ({
               marginTop: "10px",
             };
             return (
+              <div
+                key={index}
+                style={cardStyle}
+                onClick={() => handleCardClick(dateKey, index)}
+              >
                 <div
-                    key={index}
-                    style={cardStyle}
-                    onClick={() => handleCardClick(dateKey, index)}
+                  style={{
+                    fontSize: "48px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
-                  <div
-                      style={{
-                        fontSize: "48px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                  >
-                    <img
-                        style={{ width: "25px", height: "25px" }}
-                        alt={habitName}
-                        src={img}
-                    />
-                  </div>
-                  <div
-                      style={{
-                        display: "flex",
-                        paddingTop: "10px",
-                        justifyContent: "center",
-                      }}
-                  >
-                    {habitName}
-                  </div>
-                  {/*<div style={{*/}
-                  {/*    position: 'absolute',*/}
-                  {/*    top: '10px',*/}
-                  {/*    right: '10px',*/}
-                  {/*    color: 'white',*/}
-                  {/*    cursor: 'pointer',*/}
-                  {/*}}>*/}
-                  {/*    <MoreVertIcon onClick={handlePopoverOpen} />*/}
-                  {/*<Popover open={open} anchorEl={anchorEl} anchorOrigin={{*/}
-                  {/*    vertical: "bottom",*/}
-                  {/*    horizontal: 'left',*/}
-                  {/*}} onClose={handlePopoverClose} >*/}
-                  {/*    <div style={{*/}
-                  {/*        background: '#25262b',*/}
-                  {/*        color: '#c1c2c5',*/}
-                  {/*        width: '10vw',*/}
-                  {/*        cursor: 'pointer',*/}
-                  {/*    }}>*/}
-                  {/*        Copy to my profile*/}
-                  {/*    </div>*/}
-                  {/*</Popover>*/}
-                  {/*</div>*/}
+                  <img
+                    style={{ width: "25px", height: "25px" }}
+                    alt={habitName}
+                    src={img}
+                  />
                 </div>
+                <div
+                  style={{
+                    display: "flex",
+                    paddingTop: "10px",
+                    justifyContent: "center",
+                  }}
+                >
+                  {habitName}
+                </div>
+                {/*<div style={{*/}
+                {/*    position: 'absolute',*/}
+                {/*    top: '10px',*/}
+                {/*    right: '10px',*/}
+                {/*    color: 'white',*/}
+                {/*    cursor: 'pointer',*/}
+                {/*}}>*/}
+                {/*    <MoreVertIcon onClick={handlePopoverOpen} />*/}
+                {/*<Popover open={open} anchorEl={anchorEl} anchorOrigin={{*/}
+                {/*    vertical: "bottom",*/}
+                {/*    horizontal: 'left',*/}
+                {/*}} onClose={handlePopoverClose} >*/}
+                {/*    <div style={{*/}
+                {/*        background: '#25262b',*/}
+                {/*        color: '#c1c2c5',*/}
+                {/*        width: '10vw',*/}
+                {/*        cursor: 'pointer',*/}
+                {/*    }}>*/}
+                {/*        Copy to my profile*/}
+                {/*    </div>*/}
+                {/*</Popover>*/}
+                {/*</div>*/}
+              </div>
             );
           })}
         </div>
