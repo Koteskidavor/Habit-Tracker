@@ -470,15 +470,14 @@ const HabitTracker = () => {
               ]
             }
             // updatedCheckedHabits[dayKey] = [
-            //   ...(updatedCheckedHabits[dayKey] || []),
-            //   selectedHabit.habit,
-            // ];
-            updatedCheckedHabits[dayKey] = [
-              ...new Set([
-                ...(updatedCheckedHabits[dayKey] || []),
-                selectedHabit.habit,
-              ])
-            ]
+            //   ...new Set([
+            //     ...(updatedCheckedHabits[dayKey] || []),
+            //     selectedHabit.habit,
+            //   ])
+            // ]
+            updatedCheckedHabits[dayKey] = Array.from(
+                  new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+            )
           }
           break;
           // case "Tuesday":
@@ -502,9 +501,6 @@ const HabitTracker = () => {
             updatedCheckedHabits[dateKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
             );
-            // updatedCheckedHabits[dayKey] = habitsForDay.filter(
-            //     (habit) => habit !== selectedHabit.habit
-            // )
           } else {
             updatedCheckedHabits[dateKey] = [
               ...habitsForDay,
