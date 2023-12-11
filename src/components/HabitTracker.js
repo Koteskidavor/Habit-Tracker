@@ -469,33 +469,166 @@ const HabitTracker = () => {
                 selectedHabit.habit,
               ]
             }
-            // updatedCheckedHabits[dayKey] = [
-            //   ...new Set([
-            //     ...(updatedCheckedHabits[dayKey] || []),
-            //     selectedHabit.habit,
-            //   ])
-            // ]
             updatedCheckedHabits[dayKey] = Array.from(
                   new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
             )
           }
+            break;
+          case "Tuesday":
+            if(!updatedCheckedHabits[dayKey]) {
+              diff = day <= 2 ? 2 - day : 9 - day;
+              newDate.setDate(newDate.getDate() + diff);
+              dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+              habitsForDay = updatedCheckedHabits[dayKey] || [];
+            }
+            if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+              updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                  (habit) => habit !== selectedHabit.habit
+              );
+              updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                  (habit) => habit !== selectedHabit.habit
+              );
+            } else {
+              if(!habitsForDay.includes(selectedHabit.habit)) {
+                updatedCheckedHabits[dateKey] = [
+                    ...(updatedCheckedHabits[dateKey] || []),
+                    selectedHabit.habit,
+                ]
+              }
+              updatedCheckedHabits[dayKey] = Array.from(
+                  new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+              )
+            }
+            break;
+        case 'Wednesday':
+          if(!updatedCheckedHabits[dayKey]) {
+            diff = day <= 3 ? 3 - day : 10 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            habitsForDay = updatedCheckedHabits[dayKey] || [];
+          }
+          if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+            updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            )
+          } else {
+            if(!habitsForDay.includes(selectedHabit.habit)) {
+              updatedCheckedHabits[dateKey] = [
+                  ...(updatedCheckedHabits[dateKey] || []),
+                  selectedHabit.habit,
+              ]
+            }
+            updatedCheckedHabits[dayKey] = Array.from(
+                new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+            )
+          }
           break;
-          // case "Tuesday":
-          //     day = newDate.getDay();
-          //     diff = (day <= 2) ? 2 - day : 9 - day;
-          //     newDate.setDate(newDate.getDate() + diff);
-          //     dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-          //     if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-          //         updatedCheckedHabits[dayKey] = habitsForDay.filter(
-          //             (habit) => habit !== selectedHabit.habit
-          //         );
-          //     } else {
-          //         updatedCheckedHabits[dayKey] = [
-          //             ...habitsForDay,
-          //             selectedHabit ? selectedHabit.habit : "",
-          //         ];
-          //     }
-          //     break;
+        case 'Thursday':
+          if(!updatedCheckedHabits[dayKey]) {
+            diff = day <= 4 ? 4 - day : 11 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            habitsForDay = updatedCheckedHabits[dayKey] || [];
+          }
+          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+            updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+            } else {
+              if(!habitsForDay.includes(selectedHabit.habit)) {
+                updatedCheckedHabits[dateKey] = [
+                    ...(updatedCheckedHabits[dateKey] || []),
+                    selectedHabit.habit,
+                ]
+            }
+            updatedCheckedHabits[dayKey] = Array.from(
+                new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+            )
+          }
+          break;
+        case 'Friday':
+          if(!updatedCheckedHabits[dayKey]) {
+            diff = (day <= 5) ? 5 - day : 12 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            habitsForDay = updatedCheckedHabits[dayKey] || [];
+          }
+          if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+            updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            )
+          } else {
+            if(!habitsForDay.includes(selectedHabit.habit)) {
+              updatedCheckedHabits[dateKey] = [
+                  ...(updatedCheckedHabits || []),
+                  selectedHabit.habit
+              ]
+            }
+            updatedCheckedHabits[dayKey] = Array.from(
+                new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+            )
+          }
+          break;
+        case 'Saturday':
+          if (!updatedCheckedHabits[dayKey]) {
+            diff = (day <= 6) ? 6 - day : 13 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            habitsForDay = updatedCheckedHabits[dayKey] || [];
+          }
+          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+            updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            )
+          } else {
+            if(!habitsForDay.includes(selectedHabit.habit)) {
+              updatedCheckedHabits[dateKey] = [
+                  ...(updatedCheckedHabits[dateKey] || []),
+                  selectedHabit.habit,
+              ]
+            }
+            updatedCheckedHabits[dayKey] = Array.from(
+                new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+            )
+          }
+        case 'Sunday':
+          if(!updatedCheckedHabits) {
+            diff = (day <= 0) ? 0 - day : 7 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            habitsForDay = updatedCheckedHabits[dayKey] || [];
+          }
+          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            );
+            updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            )
+          } else {
+            if(!habitsForDay.includes(selectedHabit.habit)) {
+              updatedCheckedHabits[dateKey] = [
+                  ...(updatedCheckedHabits[dateKey] || []),
+                  selectedHabit.habit,
+              ]
+            }
+            updatedCheckedHabits[dayKey] = Array.from(
+                new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+            )
+          }
+          break;
         default:
           if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
             updatedCheckedHabits[dateKey] = habitsForDay.filter(
