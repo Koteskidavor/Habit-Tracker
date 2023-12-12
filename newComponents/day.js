@@ -5,8 +5,7 @@ import {Popover} from "@mui/material";
 import Calendar from "react-calendar";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-const Day = ({ date, handlePreviousDayClick, handleNextDayClick, handleDateElementClick }) => {
-
+const Day = ({ date, handlePreviousDayClick, handleNextDayClick, handleDateElementClick, dayElementRef, isCalendarOpen, handleDateChange, handleCalendarClose }) => {
     const dayOfWeek = date.toLocaleString("en-US", { weekday: "short" });
     const dayOfMonth = date.getDate();
     const month = date.toLocaleString("en-US", { month: "short" });

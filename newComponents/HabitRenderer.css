@@ -1,0 +1,52 @@
+.main {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    color: #C1C2C5;
+    justify-content: flex-start;
+}
+.icon-container {
+    font-size: 15px;
+    margin-right: 15px;
+    border-radius: 50%;
+    transition: transform 0.5s;
+    background: transparent;
+    color: #C1C2C5;
+}
+.icon-container:hover {
+    border-radius: 0;
+    background: rgba(52, 58, 64, 0.2);
+}
+.rotate-up {
+    transform: rotate(180deg);
+}
+.rotate-down {
+    transform: rotate(0deg);
+}
+.img-renderer {
+    height: 20px;
+    width: 20px;
+    margin-right: 10px;
+}
+.timeOfDay {
+    font-size: 25px;
+    color: #C1C2C5;
+}
+.add-icon {
+    color: #C1C2C5!important;
+}
+.content {
+    background: #C1C2C5;
+    height: 40vh;
+    overflow-y: auto;
+}
+.main-content {
+    display: flex;
+    margin-top: 15px;
+    height: 40vh;
+}
+
+.dialog-title {
+    background: #c1c2c5;
+    text-align: center;
+}
