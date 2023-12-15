@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dialog, DialogContent, DialogTitle} from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddIcon from "@mui/icons-material/Add";
-
+import './Popup.css';
 const Popup = ({ habitRenderer, open, handleSubmit }) => {
     return (
         <Dialog
@@ -36,8 +36,8 @@ const Popup = ({ habitRenderer, open, handleSubmit }) => {
                                     </div>
                                 )
                             })}
-                            <Button >
-                                AddIcon
+                            <Button className="add-icon">
+                                <AddIcon />
                             </Button>
                         </div>
                     </div>

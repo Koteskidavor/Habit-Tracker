@@ -3,7 +3,6 @@ import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button }
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AddIcon from "@mui/icons-material/Add";
 import Popup from './Popup';
-
 import './HabitRenderer.css';
 const HabitRenderer = ({ open, handleOpenDialog, close, handleSubmit, hover, expanded, handleExpandIconClick, img, alt, type, habitRenderer }) => {
     return (
@@ -16,7 +15,7 @@ const HabitRenderer = ({ open, handleOpenDialog, close, handleSubmit, hover, exp
                 src={img}
             />
             <span className="timeOfDay">{type}</span>
-            <IconButton className="add-icon" onClick={handleOpenDialog}>
+            <IconButton onClick={handleOpenDialog}>
                 <AddIcon />
             </IconButton>
             <Popup open={open} handleSubmit={handleSubmit} habitRenderer={habitRenderer} />
