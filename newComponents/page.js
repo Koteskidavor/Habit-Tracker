@@ -5,7 +5,7 @@ import React, { useState, useRef } from "react";
 import HabitTabs from "./tabs";
 import Day from "./day";
 import HabitRenderer from './HabitRenderer';
-import { images, type, initialMorningHabitRenderer } from './list';
+import { images, type, initialMorningHabitRenderer, initialAfterNoonRenderer, initialEveningRenderer, initialAnyTimeRenderer } from './list';
 const Page = () => {
     const initialState = {};
     type.map((habitType) => {
@@ -32,14 +32,16 @@ const Page = () => {
     const [openEveningDialog, setOpenEveningDialog] = useState(false);
     const [openAnyTimeDialog, setOpenAnyTimeDialog] = useState(false);
     const [isAddingHabit, setIsAddingHabit] = useState(false);
-
-    const storedHabits = JSON.parse(localStorage.getItem("newHabits")) || [];
-    const combinedHabits = [...initialMorningHabitRenderer, ...storedHabits];
-    const morningHabitRenderer = combinedHabits;
     const [checkedHabits, setCheckedHabits] = useState(() => {
         const storedMorningCheckedItems = localStorage.getItem("morningCheckedItems");
         return storedMorningCheckedItems ? JSON.parse(storedMorningCheckedItems) : {};
     })
+    const [morningHabitRenderer, setMorningHabitRenderer] = useState(() => {
+        const storedHabits = JSON.parse(localStorage.getItem("newMorningHabits")) || [];
+        const combinedHabits = [...initialMorningHabitRenderer, ...storedHabits];
+
+        return combinedHabits;
+    });
     const handleOpenMorningDialog = (event) => {
         setOpenMorningDialog(true);
     }
@@ -103,6 +105,18 @@ const Page = () => {
         });
         return weekDays;
     }
+    const updateHabits = (targetRenderer, newHabitData) => {
+        const storedHabits = JSON.parse(localStorage.getItem(`new${targetRenderer}Habits`)) || [];
+        const updatedHabitsData = [...storedHabits, newHabitData];
+        localStorage.setItem(`new${targetRenderer}Habits`, JSON.stringify(updatedHabitsData));
+
+        switch (targetRenderer) {
+            case 'Morning':
+                setMorningHabitRenderer(updatedHabitsData);
+                break;
+            // case 'Afternoon':
+        }
+    }
     const handleOptionChange = (event) => {
         if(habitOption === event.target.value) {
             setHabitOption('');
@@ -137,8 +151,8 @@ const Page = () => {
             )
         }
     }
-    const handleCheckboxClick = (index, habitRenderer) => {
-        const selectedHabit = habitRenderer[index];
+    const handleCheckboxClick = (index) => {
+        const selectedHabit = morningHabitRenderer[index];
         setCheckedHabits((prevCheckedHabits) => {
             const updatedCheckedHabits = { ...prevCheckedHabits };
             let habitsForDay = updatedCheckedHabits[dateKey] || [];
@@ -339,7 +353,6 @@ const Page = () => {
                     }
                     break;
             }
-            // localStorage.setItem("morningCheckedItems", JSON.stringify(updatedCheckedHabits))
             return updatedCheckedHabits;
         })
     }
@@ -369,6 +382,10 @@ const Page = () => {
                                    handleExpandIconClick={handleExpandIconClick}
                                    isAddingHabit={isAddingHabit}
                                    habitRenderer={morningHabitRenderer}
+                                   handleCheckboxClick={handleCheckboxClick}
+                                   dateKey={dateKey}
+                                   dayKey={dayKey}
+                                   checkedHabits={checkedHabits}
                     />
                     {/*<HabitRenderer open={openMorningDialog} close={handleCloseMorningDialog} img={images[1].src} type={type[1]} expanded={afterNoonEx} handleExpandIconClick={handleAfterNoonExClick} />*/}
                     {/*<HabitRenderer open={openMorningDialog} close={handleCloseMorningDialog} img={images[2].src} type={type[2]} expanded={eveningEx} handleExpandIconClick={handleEveningExClick} />*/}

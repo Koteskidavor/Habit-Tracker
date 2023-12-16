@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, Dialog, DialogContent, DialogTitle} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddIcon from "@mui/icons-material/Add";
 import './Popup.css';
-const Popup = ({ habitRenderer, open, handleSubmit }) => {
+const Popup = ({ close, habitRenderer, open, handleSubmit, handleCheckboxClick, checkedHabits, dateKey, dayKey }) => {
     return (
         <Dialog
             open={open}
@@ -18,10 +18,11 @@ const Popup = ({ habitRenderer, open, handleSubmit }) => {
                         {/* inside if else statement*/}
                         <div className="habit-wrapper">
                             {habitRenderer.map((habit, index) => {
+                                const isSelected = (checkedHabits[dateKey] && checkedHabits[dateKey].includes(habit.habit)) || (checkedHabits[dayKey] && checkedHabits[dayKey].includes(habit.habit));
                                 return (
                                     <div key={index} className="popup-habits">
-                                        <div className="checked-box">
-                                            <CheckCircleIcon />
+                                        <div onClick={() => handleCheckboxClick(index)} className="checked-box">
+                                            {isSelected && <CheckCircleIcon/>}
                                         </div>
                                         <div className="image-container">
                                             <img
@@ -43,6 +44,14 @@ const Popup = ({ habitRenderer, open, handleSubmit }) => {
                     </div>
                 </div>
             </DialogContent>
+            <DialogActions className="dialog-actions">
+                <Button onClick={close} color="primary">
+                    Cancel
+                </Button>
+                <Button onClick={handleSubmit} color="primary">
+                    Add
+                </Button>
+            </DialogActions>
         </Dialog>
     )
 }

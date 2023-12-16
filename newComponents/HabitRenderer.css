@@ -32,6 +32,10 @@
     font-size: 25px;
     color: #C1C2C5;
 }
+.habit-icon {
+    color: #C1C2C5!important;
+}
+
 ::-webkit-scrollbar {
     width: 8px;
     background: #c1c2c5;
