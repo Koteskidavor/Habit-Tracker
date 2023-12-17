@@ -1,0 +1,28 @@
+.habit-img {
+    font-size: 48px!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-img {
+    width: 25px;
+    height: 25px;
+}
+.habit-title {
+    display: flex;
+    padding-top: 10px;
+    justify-content: center;
+}
+.card-style {
+    background: #212529;
+    border: 5px solid transparent;
+    color: white;
+    width: 9vw;
+    padding: 20px;
+    border-radius: 5px;
+    position: relative;
+    margin: 10px 0 0 10px;
+}
+.clicked {
+    background: linear-gradient(rgb(52, 58, 64), rgb(52, 58, 64)) padding-box padding-box, linear-gradient(45deg, rgb(103, 65, 217) 0%, rgb(194, 37, 92) 100%);
+}
