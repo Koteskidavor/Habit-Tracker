@@ -5,7 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Popup from './Popup';
 import Habit from './habit';
 import './HabitRenderer.css';
-const HabitRenderer = ({ open, handleOpenDialog, close, handleSubmit, hover, expanded, handleExpandIconClick, img, alt, type, habitRenderer, handleCheckboxClick, dateKey, dayKey, checkedHabits }) => {
+const HabitRenderer = ({ habitOption, handleOptionChange, handleAddNewHabitClick, handleCancelClick, newHabit, newImg, open, handleOpenDialog, close, handleSubmit, hover, expanded, handleExpandIconClick, img, alt, type, habitRenderer, handleCheckboxClick, dateKey, dayKey, checkedHabits, isAddingHabit, setNewImg }) => {
     return (
         <div className="main">
             <ExpandLessIcon className={`icon-container ${hover ? 'hover' : ''} ${expanded ? 'rotate-up' : 'rotate-down'}`} onClick={handleExpandIconClick} />
@@ -19,7 +19,7 @@ const HabitRenderer = ({ open, handleOpenDialog, close, handleSubmit, hover, exp
             <IconButton onClick={handleOpenDialog} className="habit-icon">
                 <AddIcon />
             </IconButton>
-            <Popup open={open} close={close} handleSubmit={handleSubmit} habitRenderer={habitRenderer} handleCheckboxClick={handleCheckboxClick} dateKey={dateKey} dayKey={dayKey} checkedHabits={checkedHabits} />
+            <Popup handleOptionChange={handleOptionChange} habitOption={habitOption} open={open} close={close} isAddingHabit={isAddingHabit} handleSubmit={handleSubmit} habitRenderer={habitRenderer} handleCheckboxClick={handleCheckboxClick} handleCancelClick={handleCancelClick} handleAddNewHabitClick={handleAddNewHabitClick} dateKey={dateKey} dayKey={dayKey} checkedHabits={checkedHabits} newImg={newImg} newHabit={newHabit} setNewImg={setNewImg} />
             {!expanded && (
                 <Habit checkedHabits={checkedHabits} dateKey={dateKey} dayKey={dayKey} habitRenderer={habitRenderer} />
                 // <div>
