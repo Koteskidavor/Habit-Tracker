@@ -98,6 +98,9 @@
     display: flex;
     justify-content: space-between;
 }
+.button-container{
+    padding: 8px;
+}
 .weekdays {
     display: block;
 }
