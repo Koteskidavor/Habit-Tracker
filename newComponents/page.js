@@ -35,6 +35,9 @@ const Page = () => {
   const [newImg, setNewImg] = useState("");
   const [newHabit, setNewHabit] = useState("");
   const [habitOption, setHabitOption] = useState("");
+  const [habitOptionAfternoon, setHabitOptionAfternoon] = useState("");
+  const [habitOptionEvening, setHabitOptionEvening] = useState("");
+  const [habitOptionAnytime, setHabitOptionAnytime] = useState("");
 
   const dayElementRef = useRef(null);
 
@@ -59,6 +62,22 @@ const Page = () => {
     );
     return storedAfternoonCheckedItems
       ? JSON.parse(storedAfternoonCheckedItems)
+      : {};
+  });
+  const [checkedEHabits, setCheckedEHabits] = useState(() => {
+    const storedEveningCheckedItems = localStorage.getItem(
+      "eveningCheckedItems"
+    );
+    return storedEveningCheckedItems
+      ? JSON.parse(storedEveningCheckedItems)
+      : {};
+  });
+  const [checkedAnyTimeHabits, setCheckedAnyTimeHabits] = useState(() => {
+    const storedAnyTimeCheckedItems = localStorage.getItem(
+      "anyTimeCheckedItems"
+    );
+    return storedAnyTimeCheckedItems
+      ? JSON.parse(storedAnyTimeCheckedItems)
       : {};
   });
   const [morningHabitRenderer, setMorningHabitRenderer] = useState(() => {
@@ -258,7 +277,7 @@ const Page = () => {
     // localStorage.removeItem("newHabits");
     // localStorage.removeItem("newMorningHabits");
   };
-  const handleOptionChange = (event) => {
+  const handleOptionChange = (habitOption, setHabitOption, event) => {
     if (habitOption === event.target.value) {
       setHabitOption("");
     } else {
@@ -305,7 +324,8 @@ const Page = () => {
   const handleCheckboxClick = (
     index,
     setCheckedHabits,
-    morningHabitRenderer
+    morningHabitRenderer,
+    habitOption
   ) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
@@ -447,7 +467,12 @@ const Page = () => {
             handleAddNewHabitOpen={handleAddNewHabitOpen}
             habitRenderer={morningHabitRenderer}
             handleCheckboxClick={(index) =>
-              handleCheckboxClick(index, setCheckedHabits, morningHabitRenderer)
+              handleCheckboxClick(
+                index,
+                setCheckedHabits,
+                morningHabitRenderer,
+                habitOption
+              )
             }
             dateKey={dateKey}
             dayKey={dayKey}
@@ -460,7 +485,9 @@ const Page = () => {
             setNewImg={setNewImg}
             handleCancelClick={handleCancelClick}
             habitOption={habitOption}
-            handleOptionChange={handleOptionChange}
+            handleOptionChange={(event) =>
+              handleOptionChange(habitOption, setHabitOption, event)
+            }
           />
           <HabitRenderer
             open={openAfterNoonDialog}
@@ -477,7 +504,8 @@ const Page = () => {
               handleCheckboxClick(
                 index,
                 setCheckedAHabits,
-                afterNoonHabitRenderer
+                afterNoonHabitRenderer,
+                habitOptionAfternoon
               )
             }
             dateKey={dateKey}
@@ -490,11 +518,91 @@ const Page = () => {
             newImg={newImg}
             setNewImg={setNewImg}
             handleCancelClick={handleCancelClick}
-            habitOption={habitOption}
-            handleOptionChange={handleOptionChange}
+            habitOption={habitOptionAfternoon}
+            handleOptionChange={(event) =>
+              handleOptionChange(
+                habitOptionAfternoon,
+                setHabitOptionAfternoon,
+                event
+              )
+            }
           />
-          {/*<HabitRenderer open={openMorningDialog} close={handleCloseMorningDialog} img={images[2].src} type={type[2]} expanded={eveningEx} handleExpandIconClick={handleEveningExClick} />*/}
-          {/*<HabitRenderer open={openMorningDialog} close={handleCloseMorningDialog} img={images[3].src} type={type[3]} expanded={anyTimeEx} handleExpandIconClick={handleAnyTimeExClick} />*/}
+          <HabitRenderer
+            open={openEveningDialog}
+            handleOpenDialog={handleOpenEveningDialog}
+            close={handleCloseEveningDialog}
+            handleSubmit={handleSubmitEveningDialog}
+            img={images[2].src}
+            type={type[2]}
+            expanded={eveningEx}
+            handleExpandIconClick={handleEveningExClick}
+            isAddingHabit={isAddingHabit}
+            handleAddNewHabitOpen={handleAddNewHabitOpen}
+            habitRenderer={eveningHabitRenderer}
+            handleCheckboxClick={(index) =>
+              handleCheckboxClick(
+                index,
+                setCheckedEHabits,
+                eveningHabitRenderer,
+                habitOptionEvening
+              )
+            }
+            dateKey={dateKey}
+            dayKey={dayKey}
+            clickedIndex={clickedEveningHabitIndex}
+            checkedHabits={checkedEHabits}
+            handleAddNewHabitClick={() => handleAddNewHabitClick("Evening")}
+            newHabit={newHabit}
+            setNewHabit={setNewHabit}
+            newImg={newImg}
+            setNewImg={setNewImg}
+            handleCancelClick={handleCancelClick}
+            habitOption={habitOptionEvening}
+            handleOptionChange={(event) =>
+              handleOptionChange(
+                habitOptionEvening,
+                setHabitOptionEvening,
+                event
+              )
+            }
+          />
+          <HabitRenderer
+            open={openEveningDialog}
+            close={handleCloseEveningDialog}
+            img={images[3].src}
+            type={type[3]}
+            expanded={anyTimeEx}
+            handleExpandIconClick={handleAnyTimeExClick}
+            isAddingHabit={isAddingHabit}
+            handleAddNewHabitOpen={handleAddNewHabitOpen}
+            habitRenderer={eveningHabitRenderer}
+            handleCheckboxClick={(index) =>
+              handleCheckboxClick(
+                index,
+                setCheckedAnyTimeHabits,
+                anyTimeHabitRender,
+                habitOptionAnytime
+              )
+            }
+            dateKey={dateKey}
+            dayKey={dayKey}
+            clickedIndex={clickedAnyTimeHabitIndex}
+            checkedHabits={checkedAnyTimeHabits}
+            handleAddNewHabitClick={() => handleAddNewHabitClick("Anytime")}
+            newHabit={newHabit}
+            setNewHabit={setNewHabit}
+            newImg={newImg}
+            setNewImg={setNewImg}
+            handleCancelClick={handleCancelClick}
+            habitOption={habitOptionAnytime}
+            handleOptionChange={(event) =>
+              handleOptionChange(
+                habitOptionAnytime,
+                setHabitOptionAnytime,
+                event
+              )
+            }
+          />
         </>
       )}
     </LocalizationProvider>
