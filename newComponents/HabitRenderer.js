@@ -13,6 +13,7 @@ import Popup from "./Popup";
 import Habit from "./habit";
 import "./HabitRenderer.css";
 const HabitRenderer = ({
+  handleCardClick,
   handleAddNewHabitOpen,
   habitOption,
   handleOptionChange,
@@ -39,6 +40,7 @@ const HabitRenderer = ({
   setNewImg,
   setNewHabit,
   clickedIndex,
+  isMobileResponsive,
 }) => {
   return (
     <div className="main">
@@ -72,6 +74,7 @@ const HabitRenderer = ({
         newHabit={newHabit}
         setNewImg={setNewImg}
         setNewHabit={setNewHabit}
+        isMobileResponsive={isMobileResponsive}
       />
       {!expanded && (
         <Habit
@@ -80,6 +83,8 @@ const HabitRenderer = ({
           dateKey={dateKey}
           dayKey={dayKey}
           habitRenderer={habitRenderer}
+          handleCardClick={handleCardClick}
+          isMobileResponsive={isMobileResponsive}
         />
       )}
     </div>

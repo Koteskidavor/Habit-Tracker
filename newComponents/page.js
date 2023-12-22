@@ -5,6 +5,7 @@ import React, { useState, useRef } from "react";
 import HabitTabs from "./tabs";
 import Day from "./day";
 import HabitRenderer from "./HabitRenderer";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   images,
   type,
@@ -20,11 +21,11 @@ const Page = () => {
   });
 
   const [selectedTab, setSelectedTab] = useState(0);
-  const [activeHabits, setActiveHabits] = useState(
-    localStorage.getItem("activeHabits")
-      ? JSON.parse(localStorage.getItem("activeHabits"))
-      : {}
-  );
+  // const [activeHabits, setActiveHabits] = useState(
+  //   localStorage.getItem("activeHabits")
+  //     ? JSON.parse(localStorage.getItem("activeHabits"))
+  //     : {}
+  // );
 
   const [date, setDate] = useState(new Date());
 
@@ -120,7 +121,22 @@ const Page = () => {
   const [clickedAnyTimeHabitIndex, setClickedAnyTimeHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedAnyTimeHabitIndex")) || {}
   );
-  const handleOpenMorningDialog = (event) => {
+  const handleCardClick = (dayOfWeek, index, setClickedHabitIndex) => {
+    setClickedHabitIndex((prevClickedHabits) => {
+      if (prevClickedHabits[dayOfWeek]?.includes(index)) {
+        return {
+          ...prevClickedHabits,
+          [dayOfWeek]: prevClickedHabits[dayOfWeek].filter((i) => i !== index),
+        };
+      } else {
+        return {
+          ...prevClickedHabits,
+          [dayOfWeek]: [...(prevClickedHabits[dayOfWeek] || []), index],
+        };
+      }
+    });
+  };
+  const handleOpenMorningDialog = () => {
     setOpenMorningDialog(true);
   };
   const handleCloseMorningDialog = () => {
@@ -435,6 +451,7 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
+  const isMobileResponsive = useMediaQuery("(max-width: 600px)");
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <div className={style.main}>
@@ -453,6 +470,7 @@ const Page = () => {
             handleCalendarClose={handleCalendarClose}
             handlePreviousDayClick={handlePreviousDayClick}
             handleNextDayClick={handleNextDayClick}
+            isMobileResponsive={isMobileResponsive}
           />
           <HabitRenderer
             open={openMorningDialog}
@@ -488,6 +506,10 @@ const Page = () => {
             handleOptionChange={(event) =>
               handleOptionChange(habitOption, setHabitOption, event)
             }
+            handleCardClick={(dayOfWeek, index) =>
+              handleCardClick(dayOfWeek, index, setClickedHabitIndex)
+            }
+            isMobileResponsive={isMobileResponsive}
           />
           <HabitRenderer
             open={openAfterNoonDialog}
@@ -499,6 +521,7 @@ const Page = () => {
             expanded={afterNoonEx}
             handleExpandIconClick={handleAfterNoonExClick}
             isAddingHabit={isAddingHabit}
+            handleAddNewHabitOpen={handleAddNewHabitOpen}
             habitRenderer={afterNoonHabitRenderer}
             handleCheckboxClick={(index) =>
               handleCheckboxClick(
@@ -526,6 +549,10 @@ const Page = () => {
                 event
               )
             }
+            handleCardClick={(dayOfWeek, index) =>
+              handleCardClick(dayOfWeek, index, setClickedAfterNoonHabitIndex)
+            }
+            isMobileResponsive={isMobileResponsive}
           />
           <HabitRenderer
             open={openEveningDialog}
@@ -565,17 +592,23 @@ const Page = () => {
                 event
               )
             }
+            handleCardClick={(dayOfWeek, index) =>
+              handleCardClick(dayOfWeek, index, setClickedEveningHabitIndex)
+            }
+            isMobileResponsive={isMobileResponsive}
           />
           <HabitRenderer
-            open={openEveningDialog}
-            close={handleCloseEveningDialog}
+            open={openAnyTimeDialog}
+            handleOpenDialog={handleOpenAnyTimeDialog}
+            close={handleCloseAnyTimeDialog}
+            handleSubmit={handleSubmitAnyTimeDialog}
             img={images[3].src}
             type={type[3]}
             expanded={anyTimeEx}
             handleExpandIconClick={handleAnyTimeExClick}
             isAddingHabit={isAddingHabit}
             handleAddNewHabitOpen={handleAddNewHabitOpen}
-            habitRenderer={eveningHabitRenderer}
+            habitRenderer={anyTimeHabitRender}
             handleCheckboxClick={(index) =>
               handleCheckboxClick(
                 index,
@@ -594,7 +627,7 @@ const Page = () => {
             newImg={newImg}
             setNewImg={setNewImg}
             handleCancelClick={handleCancelClick}
-            habitOption={habitOptionAnytime}
+            habitOption={habitOptionEvening}
             handleOptionChange={(event) =>
               handleOptionChange(
                 habitOptionAnytime,
@@ -602,6 +635,10 @@ const Page = () => {
                 event
               )
             }
+            handleCardClick={(dayOfWeek, index) =>
+              handleCardClick(dayOfWeek, index, setClickedAnyTimeHabitIndex)
+            }
+            isMobileResponsive={isMobileResponsive}
           />
         </>
       )}
