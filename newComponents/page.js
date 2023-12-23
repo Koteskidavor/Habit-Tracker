@@ -1,11 +1,12 @@
+import React, { useState, useRef, useEffect } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import style from "./page.css";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import React, { useState, useRef } from "react";
 import HabitTabs from "./tabs";
 import Day from "./day";
 import HabitRenderer from "./HabitRenderer";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Table from "./Table";
 import {
   images,
   type,
@@ -28,6 +29,7 @@ const Page = () => {
   // );
 
   const [date, setDate] = useState(new Date());
+  const currentDate = new Date();
 
   const [expanded, setExpanded] = useState(false);
   const [afterNoonEx, setAfterNoonEx] = useState(false);
@@ -81,6 +83,20 @@ const Page = () => {
       ? JSON.parse(storedAnyTimeCheckedItems)
       : {};
   });
+
+  const getCombinedHabits = (initialHabits, localStorageKey) => {
+    const storedHabits =
+      JSON.parse(localStorage.getItem(localStorageKey)) || [];
+    const habitSet = new Set([
+      ...initialHabits.map((habit) => JSON.stringify(habit)),
+      ...storedHabits.map((habit) => JSON.stringify(habit)),
+    ]);
+    const combinedHabits = [...habitSet].map((habitString) =>
+      JSON.parse(habitString)
+    );
+
+    return combinedHabits;
+  };
   const [morningHabitRenderer, setMorningHabitRenderer] = useState(() => {
     const storedHabits =
       JSON.parse(localStorage.getItem("newMorningHabits")) || [];
@@ -109,6 +125,13 @@ const Page = () => {
 
     return combinedHabits;
   });
+  const combinedRenderer = [
+    ...getCombinedHabits(initialMorningHabitRenderer, "newMorningHabits"),
+    ...getCombinedHabits(initialAfterNoonRenderer, "newAfternoonHabits"),
+    ...getCombinedHabits(initialEveningRenderer, "newEveningHabits"),
+    ...getCombinedHabits(initialAnyTimeRenderer, "newAnyTimeHabits"),
+  ];
+  console.log(combinedRenderer);
   const [clickedHabitIndex, setClickedHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedHabitIndex")) || {}
   );
@@ -222,7 +245,6 @@ const Page = () => {
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
-  const currentDate = new Date();
   const getCurrentWeekDays = () => {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const currentDayIndex = currentDate.getDay();
@@ -239,6 +261,28 @@ const Page = () => {
       });
     return weekDays;
   };
+  const weekDays = getCurrentWeekDays(habitOption);
+  function getMonth(date) {
+    const options = { month: "short" };
+    return date.toLocaleString("en-US", options);
+  }
+  function getNextMonthDate(date, index) {
+    const currentDate = new Date(date);
+    currentDate.setDate(currentDate.getDate() + index);
+
+    const dayOfMonth = currentDate.getDate.getDate();
+
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(nextDate.getDate());
+    const nextDayOfMonth = nextDate.getDate();
+
+    let nextMonth = getMonth(nextDate);
+
+    if (nextDayOfMonth === 1) {
+      nextMonth = getMonth(nextDate);
+    }
+    return { dayOfMonth, nextMonth };
+  }
   const updateHabits = (targetRenderer, newHabitData) => {
     const storedHabits =
       JSON.parse(localStorage.getItem(`new${targetRenderer}Habits`)) || [];
@@ -641,6 +685,15 @@ const Page = () => {
             isMobileResponsive={isMobileResponsive}
           />
         </>
+      )}
+      {selectedTab === 2 && (
+        <div className="table-style">
+          <Table
+            getNextMonthDate={(index) => getNextMonthDate(currentDate, index)}
+            weekDays={weekDays}
+            isMobileResponsive={isMobileResponsive}
+          />
+        </div>
       )}
     </LocalizationProvider>
   );

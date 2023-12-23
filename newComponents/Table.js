@@ -1,30 +1,17 @@
 import React from "react";
+import TableHeader from "./TableHeader";
+import TableBody from "./TableBody";
 import "./Table.css";
 
 const Table = ({ getNextMonthDate, weekDays, isMobileResponsive }) => {
   return (
     <table className="table-container">
-      <thead>
-        <tr className="table-row">
-          <th className="table-header"></th>
-          {weekDays.map((day, index) => {
-            const { dayOfMonth, nextMonth } = getNextMonthDate(
-              currentDate,
-              index
-            );
-            return (
-              <th
-                key={index}
-                className={
-                  isMobileResponsive
-                    ? "table-headerDays table-header"
-                    : "table-header"
-                }
-              ></th>
-            );
-          })}
-        </tr>
-      </thead>
+      <TableHeader
+        getNextMonthDate={getNextMonthDate}
+        weekDays={weekDays}
+        isMobileResponsive={isMobileResponsive}
+      />
+      <TableBody />
     </table>
   );
 };
