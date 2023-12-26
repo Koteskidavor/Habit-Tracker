@@ -94,7 +94,6 @@ const Page = () => {
     const combinedHabits = [...habitSet].map((habitString) =>
       JSON.parse(habitString)
     );
-
     return combinedHabits;
   };
   const [morningHabitRenderer, setMorningHabitRenderer] = useState(() => {
@@ -121,17 +120,25 @@ const Page = () => {
   const [anyTimeHabitRender, setAnyTimeHabitRender] = useState(() => {
     const storedHabits =
       JSON.parse(localStorage.getItem("newAnyTimeHabits")) || [];
-    const combinedHabits = [...initialAnyTimeRenderer, storedHabits];
+    const combinedHabits = [...initialAnyTimeRenderer, ...storedHabits];
 
     return combinedHabits;
   });
   const combinedRenderer = [
-    ...getCombinedHabits(initialMorningHabitRenderer, "newMorningHabits"),
-    ...getCombinedHabits(initialAfterNoonRenderer, "newAfternoonHabits"),
-    ...getCombinedHabits(initialEveningRenderer, "newEveningHabits"),
-    ...getCombinedHabits(initialAnyTimeRenderer, "newAnyTimeHabits"),
+    ...getCombinedHabits(
+      initialMorningHabitRenderer,
+      "newMorningHabits",
+      initialAfterNoonRenderer,
+      "newAfternoonHabits",
+      initialEveningRenderer,
+      "newEveningHabits",
+      initialAnyTimeRenderer,
+      "newAnyTimeHabits"
+    ),
   ];
   console.log(combinedRenderer);
+
+  // console.log(eveningHabitRenderer);
   const [clickedHabitIndex, setClickedHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedHabitIndex")) || {}
   );
@@ -304,8 +311,6 @@ const Page = () => {
         break;
       case "Anytime":
         setAnyTimeHabitRender(updatedHabitsData);
-        break;
-      default:
         break;
     }
   };
