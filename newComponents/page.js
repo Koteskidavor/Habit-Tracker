@@ -83,7 +83,6 @@ const Page = () => {
       ? JSON.parse(storedAnyTimeCheckedItems)
       : {};
   });
-
   const getCombinedHabits = (initialHabits, localStorageKey) => {
     const storedHabits =
       JSON.parse(localStorage.getItem(localStorageKey)) || [];
@@ -125,20 +124,11 @@ const Page = () => {
     return combinedHabits;
   });
   const combinedRenderer = [
-    ...getCombinedHabits(
-      initialMorningHabitRenderer,
-      "newMorningHabits",
-      initialAfterNoonRenderer,
-      "newAfternoonHabits",
-      initialEveningRenderer,
-      "newEveningHabits",
-      initialAnyTimeRenderer,
-      "newAnyTimeHabits"
-    ),
+    ...getCombinedHabits(morningHabitRenderer),
+    ...getCombinedHabits(afterNoonHabitRenderer),
+    ...getCombinedHabits(eveningHabitRenderer),
+    ...getCombinedHabits(anyTimeHabitRender),
   ];
-  console.log(combinedRenderer);
-
-  // console.log(eveningHabitRenderer);
   const [clickedHabitIndex, setClickedHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedHabitIndex")) || {}
   );
