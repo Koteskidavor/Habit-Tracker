@@ -3,7 +3,12 @@ import TableHeader from "./TableHeader";
 import TableBody from "./TableBody";
 import "./Table.css";
 
-const Table = ({ getNextMonthDate, weekDays, isMobileResponsive }) => {
+const Table = ({
+  getNextMonthDate,
+  weekDays,
+  isMobileResponsive,
+  combinedRenderer,
+}) => {
   return (
     <table className="table-container">
       <TableHeader
@@ -11,7 +16,7 @@ const Table = ({ getNextMonthDate, weekDays, isMobileResponsive }) => {
         weekDays={weekDays}
         isMobileResponsive={isMobileResponsive}
       />
-      <TableBody />
+      {/* <TableBody combinedRenderer={combinedRenderer} /> */}
     </table>
   );
 };

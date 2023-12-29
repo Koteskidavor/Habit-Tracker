@@ -1,0 +1,11 @@
+.table-bodyRow {
+  height: 45px;
+  display: table-row;
+  border-bottom: 0.0625rem solid #c1c2c5;
+}
+.table-bodyResponsive {
+  height: 38px !important;
+}
+.table-tdBody {
+  padding: 6px 0;
+}

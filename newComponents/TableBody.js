@@ -1,10 +1,17 @@
 import React from "react";
+import "./TableBody.css";
 
-const TableBody = () => {
+const TableBody = ({ combinedRenderer }) => {
   return (
-    <div>
-      <div>test</div>
-    </div>
+    <tbody>
+      {combinedRenderer.map((item, index) => {
+        return (
+          <tr key={index} className="table-bodyRow">
+            <td className="table-tdBody"></td>
+          </tr>
+        );
+      })}
+    </tbody>
   );
 };
 
