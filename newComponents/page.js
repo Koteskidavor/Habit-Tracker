@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import style from "./page.css";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import HabitTabs from "./tabs";
 import Day from "./day";
@@ -15,13 +14,7 @@ import {
   initialEveningRenderer,
   initialAnyTimeRenderer,
 } from "./list";
-import {Tab, Tabs} from "@mui/material";
 const Page = () => {
-  const initialState = {};
-  type.map((habitType) => {
-    initialState[habitType.toLowerCase()] = [];
-  });
-
   const [selectedTab, setSelectedTab] = useState(0);
   // const [activeHabits, setActiveHabits] = useState(
   //   localStorage.getItem("activeHabits")
@@ -68,18 +61,13 @@ const Page = () => {
       const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
       return [...initialHabits, ...storedHabits];
     });
+
     useEffect(() => {
       localStorage.setItem(localStorageKey, JSON.stringify(habits));
     }, [habits, localStorageKey]);
-    return [habits, localStorageKey];
+
+    return [habits, setHabits];
   }
-  // const [morningHabitRenderer, setMorningHabitRenderer] = useState(() => {
-  //   const storedHabits =
-  //     JSON.parse(localStorage.getItem("newMorningHabits")) || [];
-  //   const combinedHabits = [...initialMorningHabitRenderer, ...storedHabits];
-  //
-  //   return combinedHabits;
-  // });
   const [morningHabitRenderer, setMorningHabitRenderer] = useHabitRenderer("newMorningHabits", initialMorningHabitRenderer);
   const [afterNoonHabitRenderer, setAfterNoonHabitRenderer] = useHabitRenderer("newAfternoonHabits", initialAfterNoonRenderer);
   const [eveningHabitRenderer, setEveningHabitRenderer] = useHabitRenderer("newEveningHabits", initialEveningRenderer);
@@ -294,6 +282,8 @@ const Page = () => {
       case "Anytime":
         setAnyTimeHabitRender(updatedHabitsData);
         break;
+      default:
+        return 'Error';
     }
   };
   const handleAddNewHabitClick = (targetHabitRenderer) => {
