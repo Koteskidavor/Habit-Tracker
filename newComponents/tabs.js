@@ -6,7 +6,7 @@ const HabitTabs = ({ selectedTab, handleTabChange }) => {
   return (
     <Tabs value={selectedTab} onChange={handleTabChange}>
       {tabs.map((tab, index) => (
-        <Tab key={index} label={tab} value={index}/>
+        <Tab key={index} label={tab} />
       ))}
     </Tabs>
   );

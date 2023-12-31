@@ -15,6 +15,7 @@ import {
   initialEveningRenderer,
   initialAnyTimeRenderer,
 } from "./list";
+import {Tab, Tabs} from "@mui/material";
 const Page = () => {
   const initialState = {};
   type.map((habitType) => {
@@ -50,78 +51,68 @@ const Page = () => {
   const [openAnyTimeDialog, setOpenAnyTimeDialog] = useState(false);
   const [isAddingHabit, setIsAddingHabit] = useState(false);
   const isAddingHabitRef = useRef(false);
-  const [checkedHabits, setCheckedHabits] = useState(() => {
-    const storedMorningCheckedItems = localStorage.getItem(
-      "morningCheckedItems"
-    );
-    return storedMorningCheckedItems
-      ? JSON.parse(storedMorningCheckedItems)
-      : {};
-  });
-  const [checkedAHabits, setCheckedAHabits] = useState(() => {
-    const storedAfternoonCheckedItems = localStorage.getItem(
-      "afternoonCheckedItems"
-    );
-    return storedAfternoonCheckedItems
-      ? JSON.parse(storedAfternoonCheckedItems)
-      : {};
-  });
-  const [checkedEHabits, setCheckedEHabits] = useState(() => {
-    const storedEveningCheckedItems = localStorage.getItem(
-      "eveningCheckedItems"
-    );
-    return storedEveningCheckedItems
-      ? JSON.parse(storedEveningCheckedItems)
-      : {};
-  });
-  const [checkedAnyTimeHabits, setCheckedAnyTimeHabits] = useState(() => {
-    const storedAnyTimeCheckedItems = localStorage.getItem(
-      "anyTimeCheckedItems"
-    );
-    return storedAnyTimeCheckedItems
-      ? JSON.parse(storedAnyTimeCheckedItems)
-      : {};
-  });
+  const useCheckedHabits = (localStorageKey) => {
+    const [checkedHabits, setCheckedHabits] = useState(() => {
+      const storedCheckedItems = localStorage.getItem(localStorageKey);
+      return storedCheckedItems ? JSON.parse(storedCheckedItems) : {};
+    })
+    return [checkedHabits, setCheckedHabits];
+  }
+  const [checkedHabits, setCheckedHabits] = useCheckedHabits("morningCheckedItems");
+  const [checkedAHabits, setCheckedAHabits] = useCheckedHabits("afternoonCheckedItems");
+  const [checkedEHabits, setCheckedEHabits] = useCheckedHabits("eveningCheckedItems");
+  const [checkedAnyTimeHabits, setCheckedAnyTimeHabits] = useCheckedHabits("anyTimeCheckedItems");
+
+  const useHabitRenderer = (localStorageKey, initialHabits) => {
+    const [habits, setHabits] = useState(() => {
+      const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+      return [...initialHabits, ...storedHabits];
+    });
+    useEffect(() => {
+      localStorage.setItem(localStorageKey, JSON.stringify(habits));
+    }, [habits, localStorageKey]);
+    return [habits, localStorageKey];
+  }
+  // const [morningHabitRenderer, setMorningHabitRenderer] = useState(() => {
+  //   const storedHabits =
+  //     JSON.parse(localStorage.getItem("newMorningHabits")) || [];
+  //   const combinedHabits = [...initialMorningHabitRenderer, ...storedHabits];
+  //
+  //   return combinedHabits;
+  // });
+  const [morningHabitRenderer, setMorningHabitRenderer] = useHabitRenderer("newMorningHabits", initialMorningHabitRenderer);
+  const [afterNoonHabitRenderer, setAfterNoonHabitRenderer] = useHabitRenderer("newAfternoonHabits", initialAfterNoonRenderer);
+  const [eveningHabitRenderer, setEveningHabitRenderer] = useHabitRenderer("newEveningHabits", initialEveningRenderer);
+  const [anyTimeHabitRender, setAnyTimeHabitRender] = useHabitRenderer("newAnyTimeHabits", initialAnyTimeRenderer);
   const getCombinedHabits = (initialHabits, localStorageKey) => {
     const storedHabits =
-      JSON.parse(localStorage.getItem(localStorageKey)) || [];
+        JSON.parse(localStorage.getItem(localStorageKey)) || [];
     const habitSet = new Set([
       ...initialHabits.map((habit) => JSON.stringify(habit)),
       ...storedHabits.map((habit) => JSON.stringify(habit)),
     ]);
     const combinedHabits = [...habitSet].map((habitString) =>
-      JSON.parse(habitString)
+        JSON.parse(habitString)
     );
     return combinedHabits;
   };
-  const [morningHabitRenderer, setMorningHabitRenderer] = useState(() => {
-    const storedHabits =
-      JSON.parse(localStorage.getItem("newMorningHabits")) || [];
-    const combinedHabits = [...initialMorningHabitRenderer, ...storedHabits];
+  const getCheckedHabits = (habits1, habits2, habits3, habits4) => {
+    const combinedHabits = {};
 
+    Object.keys(habits1).forEach((day) => {
+      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits1[day]]));
+    });
+    Object.keys(habits2).forEach((day) => {
+      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits2[day]]));
+    })
+    Object.keys(habits3).forEach((day) => {
+      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits3[day]]));
+    })
+    Object.keys(habits4).forEach((day) => {
+      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits4[day]]));
+    })
     return combinedHabits;
-  });
-  const [afterNoonHabitRenderer, setAfterNoonHabitRenderer] = useState(() => {
-    const storedHabits =
-      JSON.parse(localStorage.getItem("newAfternoonHabits")) || [];
-    const combinedHabits = [...initialAfterNoonRenderer, ...storedHabits];
-
-    return combinedHabits;
-  });
-  const [eveningHabitRenderer, setEveningHabitRenderer] = useState(() => {
-    const storedHabits =
-      JSON.parse(localStorage.getItem("newEveningHabits")) || [];
-    const combinedHabits = [...initialEveningRenderer, ...storedHabits];
-
-    return combinedHabits;
-  });
-  const [anyTimeHabitRender, setAnyTimeHabitRender] = useState(() => {
-    const storedHabits =
-      JSON.parse(localStorage.getItem("newAnyTimeHabits")) || [];
-    const combinedHabits = [...initialAnyTimeRenderer, ...storedHabits];
-
-    return combinedHabits;
-  });
+  }
   const newArray = [
     ...getCombinedHabits(morningHabitRenderer),
     ...getCombinedHabits(afterNoonHabitRenderer),
@@ -129,6 +120,7 @@ const Page = () => {
     ...getCombinedHabits(anyTimeHabitRender),
   ];
   const combinedRenderer = getCombinedHabits(newArray);
+  const checkedRenderer = getCheckedHabits(checkedHabits, checkedAHabits, checkedEHabits, checkedAnyTimeHabits);
   const [clickedHabitIndex, setClickedHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedHabitIndex")) || {}
   );
@@ -239,8 +231,7 @@ const Page = () => {
     handleCalendarClose();
   };
 
-  const handleTabChange = (newValue) => {
-    console.log(newValue);
+  const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
   const getCurrentWeekDays = () => {
@@ -268,7 +259,7 @@ const Page = () => {
     const currentDate = new Date(date);
     currentDate.setDate(currentDate.getDate() + index);
 
-    const dayOfMonth = currentDate.getDate.getDate();
+    const dayOfMonth = currentDate.getDate();
 
     const nextDate = new Date(currentDate);
     nextDate.setDate(nextDate.getDate());
@@ -495,10 +486,10 @@ const Page = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <div className="main">
-        {/*<HabitTabs*/}
-        {/*  handleTabChange={handleTabChange}*/}
-        {/*  selectedTab={selectedTab}*/}
-        {/*/>*/}
+        <HabitTabs
+          handleTabChange={handleTabChange}
+          selectedTab={selectedTab}
+        />
         {selectedTab === 0 && (
           <>
             <Day
@@ -684,7 +675,9 @@ const Page = () => {
         {selectedTab === 1 && (
           <div className="table-style">
             <Table
-              getNextMonthDate={(index) => getNextMonthDate(currentDate, index)}
+              currentDate={currentDate}
+              checkedRenderer={checkedRenderer}
+              getNextMonthDate={getNextMonthDate}
               weekDays={weekDays}
               isMobileResponsive={isMobileResponsive}
               combinedRenderer={combinedRenderer}

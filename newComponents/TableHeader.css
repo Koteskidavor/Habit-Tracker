@@ -7,9 +7,13 @@
   padding: 7px 0;
 }
 .table-headerDays {
-  padding: 5px 0 !important;
+  padding: 7px 0;
   border-bottom: 0.0625rem solid #c1c2c5;
   text-align: left;
+  font-size: 14px;
+}
+.table-headerDaysRes {
+  padding: 5px 0 !important;
   font-size: 12px !important;
 }
 .table-day {

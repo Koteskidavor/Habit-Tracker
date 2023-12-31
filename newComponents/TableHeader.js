@@ -21,8 +21,8 @@ const TableHeader = ({
               key={index}
               className={
                 isMobileResponsive
-                  ? "table-headerDays table-header"
-                  : "table-header"
+                  ? "table-headerDaysRes table-headerDays"
+                  : "table-headerDays"
               }
             >
               <div key={index} className="table-day">
