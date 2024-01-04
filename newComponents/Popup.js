@@ -97,6 +97,7 @@ const Popup = ({
                         <img
                           className="img"
                           draggable="false"
+                          alt={habit.name}
                           src={habit.img}
                         />
                       </div>
