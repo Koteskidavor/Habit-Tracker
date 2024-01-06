@@ -1,6 +1,8 @@
 .table-container {
   border-collapse: collapse;
-  width: 99%;
+  width: 100%;
+  background: #5E5E60;
+  height: 100%;
 }
 .table-row {
   width: 100%;
