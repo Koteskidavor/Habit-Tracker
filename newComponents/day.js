@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import "./day.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Popover } from "@mui/material";
 import Calendar from "react-calendar";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Day = ({
   date,
