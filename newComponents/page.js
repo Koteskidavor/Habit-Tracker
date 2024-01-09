@@ -66,43 +66,29 @@ const Page = () => {
   const [checkedAHabits, setCheckedAHabits] = useCheckedHabits("afternoonCheckedItems");
   const [checkedEHabits, setCheckedEHabits] = useCheckedHabits("eveningCheckedItems");
   const [checkedAnyTimeHabits, setCheckedAnyTimeHabits] = useCheckedHabits("anyTimeCheckedItems");
-
-  // let storedHabits = [];
-  // useEffect(() => {
-  //   let storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-  // }, [habits, localStorageKey]);
-  // const [habits, setHabits] = useState(() => {
-  //   const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-  // return [...initialHabits, ...storedHabits];
-  // });
-  // const [habits, setHabits] = useState(initialHabits);
-  // useEffect(() => {
-  //   localStorage.getItem(localStorageKey, JSON.stringify(habits));
-  // }, [habits, localStorageKey]);
-  // return [habits, setHabits];
   const useHabitRenderer = (localStorageKey, initialHabits) => {
     const [habits, setHabits] = useState(() => {
+      // const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || initialHabits;
       const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-      // return [...initialHabits, ...storedHabits];
-      return storedHabits;
-      // return [...new Set([...initialHabits, ...storedHabits])];
+      return [...initialHabits, ...storedHabits];
     });
-    const initialHabitsRendered = useRef(false);
     useEffect(() => {
-      localStorage.setItem(localStorageKey, JSON.stringify(habits));
-      if(!initialHabitsRendered.current) {
-        initialHabitsRendered.current = true;
-      }
-    }, [habits, localStorageKey]);
+      const habitsToStore = habits.filter(habit => !initialHabits.some(initialHabit => JSON.stringify(initialHabit) === JSON.stringify(habit)));
+      localStorage.setItem(localStorageKey, JSON.stringify(habitsToStore));
+      const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+      setHabits([...initialHabits, ...storedHabits]);
+    }, [localStorageKey, initialHabits, habits]);
+    // useEffect(() => {
+    //   const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+    //   setHabits([...initialHabits, ...storedHabits]);
+    // }, [localStorageKey, initialHabits, habits]);
     return [habits, setHabits];
   }
-  const [morningHabitRenderer, setMorningHabitRenderer] = useHabitRenderer("newMorningHabits");
-  useEffect(() => {
-    setMorningHabitRenderer((prevHabits) => [...prevHabits, ...initialMorningHabitRenderer]);
-  }, [initialMorningHabitRenderer, setMorningHabitRenderer]);
+  const [morningHabitRenderer, setMorningHabitRenderer] = useHabitRenderer("newMorningHabits", initialMorningHabitRenderer);
+  // console.log(morningHabitRenderer);
   const [afterNoonHabitRenderer, setAfterNoonHabitRenderer] = useHabitRenderer("newAfternoonHabits", initialAfterNoonRenderer);
   const [eveningHabitRenderer, setEveningHabitRenderer] = useHabitRenderer("newEveningHabits", initialEveningRenderer);
-  const [anyTimeHabitRender, setAnyTimeHabitRender] = useHabitRenderer("newAnyTimeHabits", initialAnyTimeRenderer);
+  const [anyTimeHabitRender, setAnyTimeHabitRender] = useHabitRenderer("newAnytimeHabits", initialAnyTimeRenderer);
   const getCombinedHabits = (initialHabits, localStorageKey) => {
     const storedHabits =
         JSON.parse(localStorage.getItem(localStorageKey)) || [];
@@ -300,36 +286,52 @@ const Page = () => {
     return { dayOfMonth, nextMonth };
   }
   const updateHabits = (targetRenderer, newHabitData) => {
-    const storedHabits =
-      JSON.parse(localStorage.getItem(`new${targetRenderer}Habits`)) || [];
-    const updatedHabitsData = [...storedHabits, newHabitData];
-    localStorage.setItem(
-      `new${targetRenderer}Habits`,
-      JSON.stringify(updatedHabitsData)
-    );
-    switch (targetRenderer) {
-      case "Morning":
-        setMorningHabitRenderer(updatedHabitsData);
-        break;
-      case "Afternoon":
-        setAfterNoonHabitRenderer(updatedHabitsData);
-        break;
-      case "Evening":
-        setEveningHabitRenderer(updatedHabitsData);
-        break;
-      case "Anytime":
-        setAnyTimeHabitRender(updatedHabitsData);
-        break;
-      default:
-        return 'Error';
+    const storedHabits = JSON.parse(localStorage.getItem(`new${targetRenderer}Habits`)) || [];
+
+    const habitExists = storedHabits.some(habit => JSON.stringify(habit) === JSON.stringify(newHabitData));
+
+    if(!habitExists) {
+      const updatedHabitsData = [...storedHabits, newHabitData];
+      localStorage.setItem(`new${targetRenderer}Habits`, JSON.stringify(updatedHabitsData));
+        switch(targetRenderer) {
+          case "Morning":
+            setMorningHabitRenderer(updatedHabitsData);
+            break;
+          case "Afternoon":
+            setAfterNoonHabitRenderer(updatedHabitsData);
+            break;
+          case "Evening":
+            setEveningHabitRenderer(updatedHabitsData);
+            break;
+          case "Anytime":
+            setAnyTimeHabitRender(updatedHabitsData);
+            break;
+          default:
+            return 'Error';
+        }
+      } else {
+        console.log("Habit already exists.");
     }
+
+    // switch (targetRenderer) {
+    //   case "Morning":
+    //     setMorningHabitRenderer(updatedHabitsData);
+    //     break;
+    //   case "Afternoon":
+    //     setAfterNoonHabitRenderer(updatedHabitsData);
+    //     break;
+    //   case "Evening":
+    //     setEveningHabitRenderer(updatedHabitsData);
+    //     break;
+    //   case "Anytime":
+    //     setAnyTimeHabitRender(updatedHabitsData);
+    //     break;
+    //   default:
+    //     return 'Error';
+    // }
   };
   const handleAddNewHabitClick = (targetHabitRenderer, newImg, setNewImg, newHabit, setNewHabit) => {
-    if (
-      newImg.trim() !== "" &&
-      newHabit.trim() !== "" &&
-      !isAddingHabitRef.current
-    ) {
+    if (newImg.trim() !== "" && newHabit.trim() !== "" && !isAddingHabitRef.current) {
       isAddingHabitRef.current = true;
       const newHabitData = {
         img: newImg,
@@ -510,9 +512,9 @@ const Page = () => {
     });
   };
   const isMobileResponsive = useMediaQuery("(max-width: 600px)");
-  useEffect(() => {
-    localStorage.clear();
-  }, [])
+  // useEffect(() => {
+  //   localStorage.clear();
+  // }, [])
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <div className="main">
