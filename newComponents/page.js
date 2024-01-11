@@ -68,20 +68,15 @@ const Page = () => {
   const [checkedAnyTimeHabits, setCheckedAnyTimeHabits] = useCheckedHabits("anyTimeCheckedItems");
   const useHabitRenderer = (localStorageKey, initialHabits) => {
     const [habits, setHabits] = useState(() => {
-      // const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || initialHabits;
       const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
       return [...initialHabits, ...storedHabits];
     });
-    useEffect(() => {
-      const habitsToStore = habits.filter(habit => !initialHabits.some(initialHabit => JSON.stringify(initialHabit) === JSON.stringify(habit)));
-      localStorage.setItem(localStorageKey, JSON.stringify(habitsToStore));
-      const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-      setHabits([...initialHabits, ...storedHabits]);
-    }, [localStorageKey, initialHabits, habits]);
     // useEffect(() => {
+    //   const habitsToStore = habits.filter(habit => !initialHabits.some(initialHabits => JSON.stringify(initialHabits) === JSON.stringify(habit)));
+    //   localStorage.setItem(localStorageKey, JSON.stringify(habitsToStore));
     //   const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
     //   setHabits([...initialHabits, ...storedHabits]);
-    // }, [localStorageKey, initialHabits, habits]);
+    // }, [habits]);
     return [habits, setHabits];
   }
   const [morningHabitRenderer, setMorningHabitRenderer] = useHabitRenderer("newMorningHabits", initialMorningHabitRenderer);
@@ -181,15 +176,15 @@ const Page = () => {
     setOpenAfterNoonDialog(true);
   };
   const handleCloseAfterNoonDialog = () => {
-    setAfterNoonHabitRenderer([]);
+    setCheckedAHabits([]);
     setClickedAfterNoonHabitIndex([]);
     setOpenAfterNoonDialog(false);
-    localStorage.removeItem("afterNoonCheckedItems");
+    localStorage.removeItem("afternoonCheckedItems");
     localStorage.removeItem("clickedAfterNoonHabitIndex");
   };
   const handleSubmitAfterNoonDialog = () => {
     setOpenAfterNoonDialog(false);
-    localStorage.setItem("afterNoonCheckedItems", JSON.stringify(checkedAHabits));
+    localStorage.setItem("afternoonCheckedItems", JSON.stringify(checkedAHabits));
   };
   const handleEveningExClick = () => {
     setEveningEx(!eveningEx);
@@ -198,7 +193,7 @@ const Page = () => {
     setOpenEveningDialog(true);
   };
   const handleCloseEveningDialog = () => {
-    setEveningHabitRenderer([]);
+    setCheckedEHabits([]);
     setClickedEveningHabitIndex([]);
     setOpenEveningDialog(false);
     localStorage.removeItem("eveningCheckedItems");
@@ -215,7 +210,8 @@ const Page = () => {
     setOpenAnyTimeDialog(true);
   };
   const handleCloseAnyTimeDialog = () => {
-    setAnyTimeHabitRender([]);
+    // setAnyTimeHabitRender([]);
+    setCheckedAnyTimeHabits([]);
     setClickedAnyTimeHabitIndex([]);
     setOpenAnyTimeDialog(false);
     localStorage.removeItem("anyTimeCheckedItems");
@@ -287,9 +283,8 @@ const Page = () => {
   }
   const updateHabits = (targetRenderer, newHabitData) => {
     const storedHabits = JSON.parse(localStorage.getItem(`new${targetRenderer}Habits`)) || [];
-
+    console.log(targetRenderer);
     const habitExists = storedHabits.some(habit => JSON.stringify(habit) === JSON.stringify(newHabitData));
-
     if(!habitExists) {
       const updatedHabitsData = [...storedHabits, newHabitData];
       localStorage.setItem(`new${targetRenderer}Habits`, JSON.stringify(updatedHabitsData));
@@ -312,23 +307,6 @@ const Page = () => {
       } else {
         console.log("Habit already exists.");
     }
-
-    // switch (targetRenderer) {
-    //   case "Morning":
-    //     setMorningHabitRenderer(updatedHabitsData);
-    //     break;
-    //   case "Afternoon":
-    //     setAfterNoonHabitRenderer(updatedHabitsData);
-    //     break;
-    //   case "Evening":
-    //     setEveningHabitRenderer(updatedHabitsData);
-    //     break;
-    //   case "Anytime":
-    //     setAnyTimeHabitRender(updatedHabitsData);
-    //     break;
-    //   default:
-    //     return 'Error';
-    // }
   };
   const handleAddNewHabitClick = (targetHabitRenderer, newImg, setNewImg, newHabit, setNewHabit) => {
     if (newImg.trim() !== "" && newHabit.trim() !== "" && !isAddingHabitRef.current) {
