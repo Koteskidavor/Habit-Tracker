@@ -66,21 +66,15 @@ const Page = () => {
   const [checkedAHabits, setCheckedAHabits] = useCheckedHabits("afternoonCheckedItems");
   const [checkedEHabits, setCheckedEHabits] = useCheckedHabits("eveningCheckedItems");
   const [checkedAnyTimeHabits, setCheckedAnyTimeHabits] = useCheckedHabits("anyTimeCheckedItems");
+
   const useHabitRenderer = (localStorageKey, initialHabits) => {
     const [habits, setHabits] = useState(() => {
       const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
       return [...initialHabits, ...storedHabits];
     });
-    // useEffect(() => {
-    //   const habitsToStore = habits.filter(habit => !initialHabits.some(initialHabits => JSON.stringify(initialHabits) === JSON.stringify(habit)));
-    //   localStorage.setItem(localStorageKey, JSON.stringify(habitsToStore));
-    //   const storedHabits = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-    //   setHabits([...initialHabits, ...storedHabits]);
-    // }, [habits]);
     return [habits, setHabits];
   }
   const [morningHabitRenderer, setMorningHabitRenderer] = useHabitRenderer("newMorningHabits", initialMorningHabitRenderer);
-  // console.log(morningHabitRenderer);
   const [afterNoonHabitRenderer, setAfterNoonHabitRenderer] = useHabitRenderer("newAfternoonHabits", initialAfterNoonRenderer);
   const [eveningHabitRenderer, setEveningHabitRenderer] = useHabitRenderer("newEveningHabits", initialEveningRenderer);
   const [anyTimeHabitRender, setAnyTimeHabitRender] = useHabitRenderer("newAnytimeHabits", initialAnyTimeRenderer);
@@ -98,7 +92,6 @@ const Page = () => {
   };
   const getCheckedHabits = (habits1, habits2, habits3, habits4) => {
     const combinedHabits = {};
-
     Object.keys(habits1).forEach((day) => {
       combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits1[day]]));
     });
@@ -158,6 +151,7 @@ const Page = () => {
   const handleCloseMorningDialog = () => {
     setCheckedHabits([]);
     setClickedHabitIndex([]);
+    setHabitOption("");
     setOpenMorningDialog(false);
     localStorage.removeItem("morningCheckedItems");
     localStorage.removeItem("clickedHabitIndex");
@@ -178,6 +172,7 @@ const Page = () => {
   const handleCloseAfterNoonDialog = () => {
     setCheckedAHabits([]);
     setClickedAfterNoonHabitIndex([]);
+    setHabitOptionAfternoon("");
     setOpenAfterNoonDialog(false);
     localStorage.removeItem("afternoonCheckedItems");
     localStorage.removeItem("clickedAfterNoonHabitIndex");
@@ -195,6 +190,7 @@ const Page = () => {
   const handleCloseEveningDialog = () => {
     setCheckedEHabits([]);
     setClickedEveningHabitIndex([]);
+    setHabitOptionEvening("");
     setOpenEveningDialog(false);
     localStorage.removeItem("eveningCheckedItems");
     localStorage.removeItem("clickedEveningHabitIndex");
@@ -210,9 +206,9 @@ const Page = () => {
     setOpenAnyTimeDialog(true);
   };
   const handleCloseAnyTimeDialog = () => {
-    // setAnyTimeHabitRender([]);
     setCheckedAnyTimeHabits([]);
     setClickedAnyTimeHabitIndex([]);
+    setHabitOptionAnytime("");
     setOpenAnyTimeDialog(false);
     localStorage.removeItem("anyTimeCheckedItems");
     localStorage.removeItem("clickedAnyTimeHabitIndex");
@@ -239,7 +235,9 @@ const Page = () => {
     setDate(date);
     handleCalendarClose();
   };
-
+  const handleDateElementClick = () => {
+    setIsCalendarOpen(true);
+  }
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
@@ -281,25 +279,41 @@ const Page = () => {
     }
     return { dayOfMonth, nextMonth };
   }
+  const getInitialHabits = (targetRenderer) => {
+    switch(targetRenderer) {
+      case "Morning":
+        return initialMorningHabitRenderer;
+      case "Afternoon":
+        return initialAfterNoonRenderer;
+      case "Evening":
+        return initialEveningRenderer;
+      case "Anytime":
+        return initialAnyTimeRenderer;
+      default:
+        return [];
+    }
+  }
   const updateHabits = (targetRenderer, newHabitData) => {
     const storedHabits = JSON.parse(localStorage.getItem(`new${targetRenderer}Habits`)) || [];
-    console.log(targetRenderer);
     const habitExists = storedHabits.some(habit => JSON.stringify(habit) === JSON.stringify(newHabitData));
     if(!habitExists) {
       const updatedHabitsData = [...storedHabits, newHabitData];
       localStorage.setItem(`new${targetRenderer}Habits`, JSON.stringify(updatedHabitsData));
+      const latestHabitsData = JSON.parse(localStorage.getItem(`new${targetRenderer}Habits`));
+      const initialHabits = getInitialHabits(targetRenderer);
+      const mergedHabits = [...initialHabits, ...latestHabitsData];
         switch(targetRenderer) {
           case "Morning":
-            setMorningHabitRenderer(updatedHabitsData);
+            setMorningHabitRenderer(mergedHabits);
             break;
           case "Afternoon":
-            setAfterNoonHabitRenderer(updatedHabitsData);
+            setAfterNoonHabitRenderer(mergedHabits);
             break;
           case "Evening":
-            setEveningHabitRenderer(updatedHabitsData);
+            setEveningHabitRenderer(mergedHabits);
             break;
           case "Anytime":
-            setAnyTimeHabitRender(updatedHabitsData);
+            setAnyTimeHabitRender(mergedHabits);
             break;
           default:
             return 'Error';
@@ -507,6 +521,7 @@ const Page = () => {
               dayElementRef={dayElementRef}
               isCalendarOpen={isCalendarOpen}
               handleDateChange={handleDateChange}
+              handleDateElementClick={handleDateElementClick}
               handleCalendarClose={handleCalendarClose}
               handlePreviousDayClick={handlePreviousDayClick}
               handleNextDayClick={handleNextDayClick}

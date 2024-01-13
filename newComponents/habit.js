@@ -1,15 +1,16 @@
 import React from "react";
 import "./habit.css";
 const Habit = ({
-  checkedHabits,
-  dateKey,
-  dayKey,
-  habitRenderer,
-  clickedIndex,
-  handleCardClick,
+    checkedHabits,
+    dateKey,
+    dayKey,
+    habitRenderer,
+    clickedIndex,
+    handleCardClick,
+    isMobileResponsive,
 }) => {
   return (
-    <div className="habit-container">
+    <div className={isMobileResponsive ? "habit-containerRes habit-container" : "habit-container"}>
       {(checkedHabits[dateKey] || checkedHabits[dayKey])?.map(
         (habit, index) => {
           const habitDetails = habitRenderer.find(
