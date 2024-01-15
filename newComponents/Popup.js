@@ -111,52 +111,52 @@ const Popup = ({
               </div>
             )}
           </div>
-          {/*{isAddingHabit ? null : (*/}
-          {/*  <div className="weekdays">*/}
-          {/*    <CheckboxOption*/}
-          {/*      label="Monday"*/}
-          {/*      value="Monday"*/}
-          {/*      checked={habitOption === "Monday"}*/}
-          {/*      onChange={handleOptionChange}*/}
-          {/*    />*/}
-          {/*    <CheckboxOption*/}
-          {/*      label="Tuesday"*/}
-          {/*      value="Tuesday"*/}
-          {/*      checked={habitOption === "Tuesday"}*/}
-          {/*      onChange={handleOptionChange}*/}
-          {/*    />*/}
-          {/*    <CheckboxOption*/}
-          {/*      label="Wednesday"*/}
-          {/*      value="Wednesday"*/}
-          {/*      checked={habitOption === "Wednesday"}*/}
-          {/*      onChange={handleOptionChange}*/}
-          {/*    />*/}
-          {/*    <CheckboxOption*/}
-          {/*      label="Thursday"*/}
-          {/*      value="Thursday"*/}
-          {/*      checked={habitOption === "Thursday"}*/}
-          {/*      onChange={handleOptionChange}*/}
-          {/*    />*/}
-          {/*    <CheckboxOption*/}
-          {/*      label="Friday"*/}
-          {/*      value="Friday"*/}
-          {/*      checked={habitOption === "Friday"}*/}
-          {/*      onChange={handleOptionChange}*/}
-          {/*    />*/}
-          {/*    <CheckboxOption*/}
-          {/*      label="Saturday"*/}
-          {/*      value="Saturday"*/}
-          {/*      checked={habitOption === "Saturday"}*/}
-          {/*      onChange={handleOptionChange}*/}
-          {/*    />*/}
-          {/*    <CheckboxOption*/}
-          {/*      label="Sunday"*/}
-          {/*      value="Sunday"*/}
-          {/*      checked={habitOption === "Sunday"}*/}
-          {/*      onChange={handleOptionChange}*/}
-          {/*    />*/}
-          {/*  </div>*/}
-          {/*)}*/}
+          {isAddingHabit ? null : (
+            <div className="weekdays">
+              <CheckboxOption
+                label="Monday"
+                value="Monday"
+                checked={habitOption === "Monday"}
+                onChange={handleOptionChange}
+              />
+              <CheckboxOption
+                label="Tuesday"
+                value="Tuesday"
+                checked={habitOption === "Tuesday"}
+                onChange={handleOptionChange}
+              />
+              <CheckboxOption
+                label="Wednesday"
+                value="Wednesday"
+                checked={habitOption === "Wednesday"}
+                onChange={handleOptionChange}
+              />
+              <CheckboxOption
+                label="Thursday"
+                value="Thursday"
+                checked={habitOption === "Thursday"}
+                onChange={handleOptionChange}
+              />
+              <CheckboxOption
+                label="Friday"
+                value="Friday"
+                checked={habitOption === "Friday"}
+                onChange={handleOptionChange}
+              />
+              <CheckboxOption
+                label="Saturday"
+                value="Saturday"
+                checked={habitOption === "Saturday"}
+                onChange={handleOptionChange}
+              />
+              <CheckboxOption
+                label="Sunday"
+                value="Sunday"
+                checked={habitOption === "Sunday"}
+                onChange={handleOptionChange}
+              />
+            </div>
+          )}
         </div>
       </DialogContent>
       <DialogActions className="dialog-actions">

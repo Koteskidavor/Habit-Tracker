@@ -370,6 +370,7 @@ const Page = () => {
       dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
       habitsForDay = updatedCheckedHabits[dayKey] || [];
     }
+
     if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
       updatedCheckedHabits[dayKey] = habitsForDay.filter(
         (habit) => habit !== selectedHabit.habit
@@ -378,16 +379,29 @@ const Page = () => {
         (habit) => habit !== selectedHabit.habit
       );
     } else {
-      if (!habitsForDay.includes(selectedHabit.habit)) {
+      if(!habitsForDay.includes(selectedHabit)) {
         updatedCheckedHabits[dateKey] = [
-          ...(updatedCheckedHabits[dateKey] || []),
-          selectedHabit.habit,
-        ];
+            ...(updatedCheckedHabits[dateKey] || []),
+            selectedHabit.habit,
+        ]
       }
       updatedCheckedHabits[dayKey] = Array.from(
-        new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
-      );
+          new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+      )
     }
+    // const habitAddedOnSelectedDay = habitsForDay.includes(selectedHabit.habit);
+    // if(selectedHabit && habitAddedOnSelectedDay) {
+    //   updatedCheckedHabits[dayKey] = habitsForDay.filter(
+    //       (habit) => habit !== selectedHabit.habit
+    //   );
+    //   updatedCheckedHabits[dateKey] = habitsForDay.filter(
+    //       (habit) => habit !== selectedHabit.habit
+    //   );
+    // } else {
+    //   updatedCheckedHabits[dayKey] = Array.from(
+    //       new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+    //   )
+    // }
   };
   const handleCheckboxClick = (
     index,
@@ -402,104 +416,104 @@ const Page = () => {
       let newDate = new Date();
       let day = newDate.getDay();
       let diff;
-       switch (habitOption) {
-          case "Monday":
-            diff = day < 1 ? 1 - day : 8 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
+      switch (habitOption) {
+        case "Monday":
+          diff = day < 1 ? 1 - day : 8 - day;
+          handleCheckLogic(
+              dayKey,
+              updatedCheckedHabits,
+              selectedHabit,
+              habitsForDay,
+              dateKey,
+              diff,
+              newDate
+          );
+          break;
+        case "Tuesday":
+          diff = day <= 2 ? 2 - day : 9 - day;
+          handleCheckLogic(
+              dayKey,
+              updatedCheckedHabits,
+              selectedHabit,
+              habitsForDay,
+              dateKey,
+              diff,
+              newDate
+          );
+          break;
+        case "Wednesday":
+          diff = day <= 3 ? 3 - day : 10 - day;
+          handleCheckLogic(
+              dayKey,
+              updatedCheckedHabits,
+              selectedHabit,
+              habitsForDay,
+              dateKey,
+              diff,
+              newDate
+          );
+          break;
+        case "Thursday":
+          diff = day <= 4 ? 4 - day : 11 - day;
+          handleCheckLogic(
+              dayKey,
+              updatedCheckedHabits,
+              selectedHabit,
+              habitsForDay,
+              dateKey,
+              diff,
+              newDate
+          );
+          break;
+        case "Friday":
+          diff = day <= 5 ? 5 - day : 12 - day;
+          handleCheckLogic(
+              dayKey,
+              updatedCheckedHabits,
+              selectedHabit,
+              habitsForDay,
+              dateKey,
+              diff,
+              newDate
+          );
+          break;
+        case "Saturday":
+          diff = day <= 6 ? 6 - day : 13 - day;
+          handleCheckLogic(
+              dayKey,
+              updatedCheckedHabits,
+              selectedHabit,
+              habitsForDay,
+              dateKey,
+              diff,
+              newDate
+          );
+          break;
+        case "Sunday":
+          diff = day <= 0 ? 0 - day : 7 - day;
+          handleCheckLogic(
+              dayKey,
+              updatedCheckedHabits,
+              selectedHabit,
+              habitsForDay,
+              dateKey,
+              diff,
+              newDate
+          );
+          break;
+        default:
+          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
             );
-            break;
-          case "Tuesday":
-            diff = day <= 2 ? 2 - day : 9 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
-            );
-            break;
-          case "Wednesday":
-            diff = day <= 3 ? 3 - day : 10 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
-            );
-            break;
-          case "Thursday":
-            diff = day <= 4 ? 4 - day : 11 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
-            );
-            break;
-          case "Friday":
-            diff = day <= 5 ? 5 - day : 12 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
-            );
-            break;
-          case "Saturday":
-            diff = day <= 6 ? 6 - day : 13 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
-            );
-            break;
-          case "Sunday":
-            diff = day <= 0 ? 0 - day : 7 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
-            );
-            break;
-          default:
-              if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-                updatedCheckedHabits[dateKey] = habitsForDay.filter(
-                    (habit) => habit !== selectedHabit.habit
-                );
-              } else {
-                updatedCheckedHabits[dateKey] = [
-                  ...habitsForDay,
-                  selectedHabit ? selectedHabit.habit : "",
-                ];
-              }
-            break;
-        }
+          } else {
+            updatedCheckedHabits[dateKey] = [
+              ...habitsForDay,
+              selectedHabit ? selectedHabit.habit : "",
+            ];
+          }
+          break;
+       }
       return updatedCheckedHabits;
     });
   };
