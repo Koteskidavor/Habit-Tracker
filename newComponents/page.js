@@ -370,38 +370,24 @@ const Page = () => {
       dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
       habitsForDay = updatedCheckedHabits[dayKey] || [];
     }
-
-    if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+    if (selectedHabit && habitsForDay && habitsForDay.includes(selectedHabit.habit)) {
       updatedCheckedHabits[dayKey] = habitsForDay.filter(
-        (habit) => habit !== selectedHabit.habit
+          (habit) => habit !== selectedHabit.habit
       );
       updatedCheckedHabits[dateKey] = habitsForDay.filter(
-        (habit) => habit !== selectedHabit.habit
+          (habit) => habit !== selectedHabit.habit
       );
     } else {
-      if(!habitsForDay.includes(selectedHabit)) {
-        updatedCheckedHabits[dateKey] = [
+      if(!updatedCheckedHabits[dateKey].includes(selectedHabit.habit)) {
+          updatedCheckedHabits[dateKey] = [
             ...(updatedCheckedHabits[dateKey] || []),
             selectedHabit.habit,
-        ]
+          ];
+        }
       }
       updatedCheckedHabits[dayKey] = Array.from(
           new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
       )
-    }
-    // const habitAddedOnSelectedDay = habitsForDay.includes(selectedHabit.habit);
-    // if(selectedHabit && habitAddedOnSelectedDay) {
-    //   updatedCheckedHabits[dayKey] = habitsForDay.filter(
-    //       (habit) => habit !== selectedHabit.habit
-    //   );
-    //   updatedCheckedHabits[dateKey] = habitsForDay.filter(
-    //       (habit) => habit !== selectedHabit.habit
-    //   );
-    // } else {
-    //   updatedCheckedHabits[dayKey] = Array.from(
-    //       new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
-    //   )
-    // }
   };
   const handleCheckboxClick = (
     index,
@@ -506,6 +492,9 @@ const Page = () => {
             updatedCheckedHabits[dateKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
             );
+            updatedCheckedHabits[dayKey] = habitsForDay.filter(
+                (habit) => habit !== selectedHabit.habit
+            )
           } else {
             updatedCheckedHabits[dateKey] = [
               ...habitsForDay,
@@ -513,7 +502,7 @@ const Page = () => {
             ];
           }
           break;
-       }
+      }
       return updatedCheckedHabits;
     });
   };
