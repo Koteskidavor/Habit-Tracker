@@ -3,7 +3,7 @@ import TableHeader from "./TableHeader";
 import TableBody from "./TableBody";
 import "./Table.css";
 
-const Table = ({ getNextMonthDate, currentDate, weekDays, isMobileResponsive, combinedRenderer, checkedRenderer }) => {
+const Table = ({ getNextMonthDate, currentDate, weekDays, isMobileResponsive, combinedRenderer, clickedHabitIndex }) => {
   return (
     <table className="table-container">
       <TableHeader
@@ -12,7 +12,7 @@ const Table = ({ getNextMonthDate, currentDate, weekDays, isMobileResponsive, co
         weekDays={weekDays}
         isMobileResponsive={isMobileResponsive}
       />
-       <TableBody combinedRenderer={combinedRenderer} isMobileResponsive={isMobileResponsive} weekDays={weekDays} checkedRenderer={checkedRenderer} />
+       <TableBody combinedRenderer={combinedRenderer} isMobileResponsive={isMobileResponsive} weekDays={weekDays} clickedHabitIndex={clickedHabitIndex} />
     </table>
   );
 };

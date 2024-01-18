@@ -129,19 +129,19 @@ const Page = () => {
   const handleCardClick = (dayOfWeek, index, setClickedHabitIndex, localStorageKey) => {
     const selectedHabit = combinedRenderer[index];
     setClickedHabitIndex((prevClickedHabits) => {
-        const updatedCheckedHabits = { ...prevClickedHabits };
-        let habitsForDay = updatedCheckedHabits[dateKey] || [];
-        if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-          updatedCheckedHabits[dateKey] = habitsForDay.filter(
-              (habit) => habit !== selectedHabit.habit
-          );
-        } else {
-          updatedCheckedHabits[dateKey] = [
-              ...habitsForDay,
-              selectedHabit ? selectedHabit.habit : "",
-          ];
-        }
-        return updatedCheckedHabits;
+      const updatedCheckedHabits = { ...prevClickedHabits };
+      let habitsForDay = updatedCheckedHabits[dateKey] || [];
+      if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+        updatedCheckedHabits[dateKey] = habitsForDay.filter(
+            (habit) => habit !== selectedHabit.habit
+        );
+      } else {
+        updatedCheckedHabits[dateKey] = [
+          ...habitsForDay,
+          selectedHabit ? selectedHabit.habit : "",
+        ];
+      }
+      return updatedCheckedHabits;
     })
     // setClickedHabitIndex((prevClickedHabits) => {
     //   if (prevClickedHabits[dayOfWeek]?.includes(index)) {
@@ -725,11 +725,11 @@ const Page = () => {
           <div className="table-style">
             <Table
               currentDate={currentDate}
-              checkedRenderer={checkedRenderer}
               getNextMonthDate={getNextMonthDate}
               weekDays={weekDays}
               isMobileResponsive={isMobileResponsive}
               combinedRenderer={combinedRenderer}
+              clickedHabitIndex={clickedHabitIndex}
             />
           </div>
         )}

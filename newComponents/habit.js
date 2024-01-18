@@ -20,13 +20,13 @@ const Habit = ({
             return null;
           }
           const { img, habit: habitName } = habitDetails;
-          const isHabitClicked = clickedIndex[dateKey][index];
-          console.log(isHabitClicked);
+          // const isHabitClicked = clickedIndex[dateKey];
+          const isHabitClicked = clickedIndex[dateKey] && clickedIndex[dateKey].includes(index);
           return (
             <div
               key={index}
               className={isHabitClicked ? "card-style clicked" : "card-style"}
-              onClick={() => handleCardClick(dateKey, index, habit)}
+              onClick={() => handleCardClick(dateKey, index)}
             >
               <div className="habit-img">
                 <img className="card-img" src={img} alt={habitName} />

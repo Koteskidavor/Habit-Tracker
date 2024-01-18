@@ -1,7 +1,7 @@
 import React from "react";
 import "./TableBody.css";
 
-const TableBody = ({ combinedRenderer, isMobileResponsive, weekDays, checkedRenderer }) => {
+const TableBody = ({ combinedRenderer, isMobileResponsive, weekDays, clickedHabitIndex }) => {
   return (
     <tbody>
       {combinedRenderer.map((item, index) => {
@@ -14,7 +14,7 @@ const TableBody = ({ combinedRenderer, isMobileResponsive, weekDays, checkedRend
               </div>
             </td>
             {weekDays.map((day, dayIndex) => {
-              const habitsForDay = checkedRenderer[day.dateKey] || [];
+              const habitsForDay = clickedHabitIndex[day.dateKey] || [];
               const isHabitPresentForDay = habitsForDay.includes(
                   item.habit
               );
