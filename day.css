@@ -1,0 +1,15 @@
+.main {
+  position: relative;
+  margin-top: 20px;
+  display: block !important;
+}
+.date {
+  color: #c1c2c5;
+  align-items: center;
+  display: flex;
+  width: 15vw;
+  justify-content: space-between;
+}
+.date-responsive {
+  width: 90vw !important;
+}

@@ -1,0 +1,38 @@
+.table-row {
+  width: 100%;
+  border-bottom: 0.0625rem solid #c1c2c5;
+}
+.table-header {
+  width: 40%;
+  padding: 7px 0;
+}
+.table-headerDays {
+  padding: 7px 0;
+  border-bottom: 0.0625rem solid #c1c2c5;
+  text-align: left;
+  font-size: 14px;
+}
+.table-headerDaysRes {
+  padding: 5px 0 !important;
+  font-size: 12px !important;
+}
+.table-day {
+  color: #c1c2c5;
+  font-weight: bold;
+}
+.date-container {
+  color: #c1c2c5;
+  font-weight: 500;
+  font-size: 12px;
+}
+.date-containerResponsive {
+  font-size: 10px !important;
+}
+.next-month {
+  color: #c1c2c5;
+  font-weight: 500;
+  font-size: 12px;
+}
+.next-monthResponsive {
+  font-size: 10px !important;
+}

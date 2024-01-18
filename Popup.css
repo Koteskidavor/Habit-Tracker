@@ -1,0 +1,102 @@
+.content {
+  background: #c1c2c5 !important;
+  height: 40vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+}
+.main-content {
+  display: flex;
+  margin-top: 15px;
+  /*width: 100%;*/
+  height: 40vh;
+}
+.habit-wrapper {
+  display: flex;
+  height: 40vh!important;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.dialog-title {
+  background: #c1c2c5;
+  text-align: center;
+}
+.popup-habits {
+  background: #212529;
+  color: white;
+  width: 8vw;
+  padding: 15px;
+  border-radius: 5px;
+  position: relative;
+  margin: 5px;
+}
+.popup-habitsResponsive {
+  width: 90% !important;
+}
+.checked-box {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background: #c1c2c5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.image-container {
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img {
+  height: 20px;
+  width: 20px;
+  margin-right: 10px;
+  text-align: center;
+}
+.habit-title {
+  display: flex;
+  padding-top: 10px;
+  justify-content: center;
+}
+.add-icon {
+  background: white;
+  border-radius: 100%;
+  width: 5vw;
+  height: 10vh;
+  margin-left: 50px;
+  margin-top: 5px;
+  color: black;
+}
+.dialog-actions {
+  background: #c1c2c5 !important;
+}
+.newHabit-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+.main-input {
+  width: 90%;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 5px;
+}
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+.button-actions {
+  padding: 8px;
+}
+.weekdays {
+  display: block;
+  width: 30vw;
+}
