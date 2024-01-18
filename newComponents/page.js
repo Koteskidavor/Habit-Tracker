@@ -127,23 +127,39 @@ const Page = () => {
     JSON.parse(localStorage.getItem("clickedAnyTimeHabitIndex")) || {}
   );
   const handleCardClick = (dayOfWeek, index, setClickedHabitIndex, localStorageKey) => {
+    const selectedHabit = combinedRenderer[index];
     setClickedHabitIndex((prevClickedHabits) => {
-      if (prevClickedHabits[dayOfWeek]?.includes(index)) {
-        const updatedHabits = {
-          ...prevClickedHabits,
-          [dayOfWeek]: prevClickedHabits[dayOfWeek].filter((i) => i !== index),
-        };
-        localStorage.setItem(localStorageKey, JSON.stringify(updatedHabits));
-        return updatedHabits;
-      } else {
-        const updatedHabits = {
-          ...prevClickedHabits,
-          [dayOfWeek]: [...(prevClickedHabits[dayOfWeek] || []), index],
+        const updatedCheckedHabits = { ...prevClickedHabits };
+        let habitsForDay = updatedCheckedHabits[dateKey] || [];
+        if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+          updatedCheckedHabits[dateKey] = habitsForDay.filter(
+              (habit) => habit !== selectedHabit.habit
+          );
+        } else {
+          updatedCheckedHabits[dateKey] = [
+              ...habitsForDay,
+              selectedHabit ? selectedHabit.habit : "",
+          ];
         }
-        localStorage.setItem(localStorageKey, JSON.stringify(updatedHabits));
-        return updatedHabits;
-      }
-    });
+        return updatedCheckedHabits;
+    })
+    // setClickedHabitIndex((prevClickedHabits) => {
+    //   if (prevClickedHabits[dayOfWeek]?.includes(index)) {
+    //     const updatedHabits = {
+    //       ...prevClickedHabits,
+    //       [dayOfWeek]: prevClickedHabits[dayOfWeek].filter((i) => i !== index),
+    //     };
+    //     localStorage.setItem(localStorageKey, JSON.stringify(updatedHabits));
+    //     return updatedHabits;
+    //   } else {
+    //     const updatedHabits = {
+    //       ...prevClickedHabits,
+    //       [dayOfWeek]: [...(prevClickedHabits[dayOfWeek] || []), index],
+    //     }
+    //     localStorage.setItem(localStorageKey, JSON.stringify(updatedHabits));
+    //     return updatedHabits;
+    //   }
+    // });
   };
   const handleOpenMorningDialog = () => {
     setOpenMorningDialog(true);
@@ -365,6 +381,11 @@ const Page = () => {
     diff,
     newDate
   ) => {
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0);
+    // if(newDate < today) {
+    //   return null;
+    // }
     if (!updatedCheckedHabits[dayKey]) {
       newDate.setDate(newDate.getDate() + diff);
       dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
@@ -378,7 +399,7 @@ const Page = () => {
           (habit) => habit !== selectedHabit.habit
       );
     } else {
-      if(!updatedCheckedHabits[dateKey].includes(selectedHabit.habit)) {
+      if(!updatedCheckedHabits && !updatedCheckedHabits[dateKey].includes(selectedHabit.habit)) {
           updatedCheckedHabits[dateKey] = [
             ...(updatedCheckedHabits[dateKey] || []),
             selectedHabit.habit,
