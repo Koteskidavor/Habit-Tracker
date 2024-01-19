@@ -20,8 +20,7 @@ const Habit = ({
             return null;
           }
           const { img, habit: habitName } = habitDetails;
-          // const isHabitClicked = clickedIndex[dateKey];
-          const isHabitClicked = clickedIndex[dateKey] && clickedIndex[dateKey].includes(index);
+          const isHabitClicked = clickedIndex[dateKey] && clickedIndex[dateKey].includes(habitName);
           return (
             <div
               key={index}
