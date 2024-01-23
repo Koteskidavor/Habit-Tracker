@@ -90,22 +90,6 @@ const Page = () => {
     );
     return combinedHabits;
   };
-  const getCheckedHabits = (habits1, habits2, habits3, habits4) => {
-    const combinedHabits = {};
-    Object.keys(habits1).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits1[day]]));
-    });
-    Object.keys(habits2).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits2[day]]));
-    })
-    Object.keys(habits3).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits3[day]]));
-    })
-    Object.keys(habits4).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits4[day]]));
-    })
-    return combinedHabits;
-  }
   const newArray = [
     ...getCombinedHabits(morningHabitRenderer),
     ...getCombinedHabits(afterNoonHabitRenderer),
@@ -113,7 +97,6 @@ const Page = () => {
     ...getCombinedHabits(anyTimeHabitRender),
   ];
   const combinedRenderer = getCombinedHabits(newArray);
-  const checkedRenderer = getCheckedHabits(checkedHabits, checkedAHabits, checkedEHabits, checkedAnyTimeHabits);
   const [clickedHabitIndex, setClickedHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedHabitIndex")) || {}
   );
@@ -126,8 +109,15 @@ const Page = () => {
   const [clickedAnyTimeHabitIndex, setClickedAnyTimeHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedAnyTimeHabitIndex")) || {}
   );
-  const handleCardClick = (dayOfWeek, index, setClickedHabitIndex, localStorageKey) => {
-    const selectedHabit = combinedRenderer[index];
+  // const getCombinedRendererHabit = (renderer, index, combinedRenderer) => {
+  //   const morningHabitName = renderer[index]?.habit;
+  //   const matchingCombinedHabits = combinedRenderer.find(habit => habit.habit === morningHabitName);
+  //   return matchingCombinedHabits ? matchingCombinedHabits.habit : null;
+  // }
+  const handleCardClick = (dayOfWeek, index, morningHabitRenderer, setClickedHabitIndex, localStorageKey) => {
+    const selectedHabit = morningHabitRenderer[index];
+    // const combination = combinedRenderer;
+    // const selectedHabit = getCombinedRendererHabit(morningHabitRenderer, index, combination);
     setClickedHabitIndex((prevClickedHabits) => {
       const updatedCheckedHabits = { ...prevClickedHabits };
       let habitsForDay = updatedCheckedHabits[dateKey] || [];
@@ -370,7 +360,7 @@ const Page = () => {
       dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
       habitsForDay = updatedCheckedHabits[dayKey] || [];
     }
-    if (selectedHabit && habitsForDay && habitsForDay.includes(selectedHabit.habit)) {
+    if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
       updatedCheckedHabits[dayKey] = habitsForDay.filter(
           (habit) => habit !== selectedHabit.habit
       );
@@ -378,16 +368,16 @@ const Page = () => {
           (habit) => habit !== selectedHabit.habit
       );
     } else {
-      if(!updatedCheckedHabits && !updatedCheckedHabits.includes(selectedHabit.habit)) {
+      if(!habitsForDay.includes(selectedHabit.habit)) {
           updatedCheckedHabits[dateKey] = [
             ...(updatedCheckedHabits[dateKey] || []),
             selectedHabit.habit,
           ];
         }
+        updatedCheckedHabits[dayKey] = Array.from(
+            new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+        )
       }
-      updatedCheckedHabits[dayKey] = Array.from(
-          new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
-      )
   };
   const handleCheckboxClick = (
     index,
@@ -565,7 +555,7 @@ const Page = () => {
                 handleOptionChange(habitOption, setHabitOption, event)
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedHabitIndex, "clickedHabitIndex")
+                handleCardClick(dayOfWeek, index, morningHabitRenderer, setClickedHabitIndex, "clickedHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -608,7 +598,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedAfterNoonHabitIndex, "clickedAfterNoonHabitIndex")
+                handleCardClick(dayOfWeek, index, afterNoonHabitRenderer, setClickedAfterNoonHabitIndex, "clickedAfterNoonHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -651,7 +641,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedEveningHabitIndex, "clickedEveningHabitIndex")
+                handleCardClick(dayOfWeek, index, eveningHabitRenderer, setClickedEveningHabitIndex, "clickedEveningHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -694,7 +684,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedAnyTimeHabitIndex, "clickedAnyTimeHabitIndex")
+                handleCardClick(dayOfWeek, index, anyTimeHabitRender, setClickedAnyTimeHabitIndex, "clickedAnyTimeHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
