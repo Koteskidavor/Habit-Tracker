@@ -116,8 +116,7 @@ const Page = () => {
   // }
   const handleCardClick = (dayOfWeek, index, morningHabitRenderer, setClickedHabitIndex, localStorageKey) => {
     const selectedHabit = morningHabitRenderer[index];
-    // const combination = combinedRenderer;
-    // const selectedHabit = getCombinedRendererHabit(morningHabitRenderer, index, combination);
+    console.log(morningHabitRenderer);
     setClickedHabitIndex((prevClickedHabits) => {
       const updatedCheckedHabits = { ...prevClickedHabits };
       let habitsForDay = updatedCheckedHabits[dateKey] || [];
@@ -135,6 +134,10 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
+  console.log('morning', clickedHabitIndex);
+  console.log('afternoon', clickedAfterNoonHabitIndex);
+  console.log('evening', clickedEveningHabitIndex);
+  console.log('anytime', clickedAnyTimeHabitIndex);
   const handleOpenMorningDialog = () => {
     setOpenMorningDialog(true);
   };
