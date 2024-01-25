@@ -114,30 +114,26 @@ const Page = () => {
   //   const matchingCombinedHabits = combinedRenderer.find(habit => habit.habit === morningHabitName);
   //   return matchingCombinedHabits ? matchingCombinedHabits.habit : null;
   // }
-  const handleCardClick = (dayOfWeek, index, morningHabitRenderer, setClickedHabitIndex, localStorageKey) => {
-    const selectedHabit = morningHabitRenderer[index];
-    console.log(morningHabitRenderer);
-    setClickedHabitIndex((prevClickedHabits) => {
-      const updatedCheckedHabits = { ...prevClickedHabits };
-      let habitsForDay = updatedCheckedHabits[dateKey] || [];
-      if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-        updatedCheckedHabits[dateKey] = habitsForDay.filter(
-            (habit) => habit !== selectedHabit.habit
-        );
-      } else {
-        updatedCheckedHabits[dateKey] = [
-          ...habitsForDay,
-          selectedHabit ? selectedHabit.habit : "",
-        ];
+  const handleFilterHabit = (habitsForDay, selectedHabit) => {
+    return habitsForDay.filter((habit) => habit !== selectedHabit);
+  }
+  const handleCardClick = (dayOfWeek, index, habits, setClickedHabitIndex, localStorageKey) => {
+    setClickedHabitIndex((prevHabits) => {
+      const selectedHabit = habits[dayOfWeek][index];
+      const habitsForDay = prevHabits[dayOfWeek] || [];
+      const habitExists = habitsForDay.includes(selectedHabit);
+      const updatedCheckedHabits = {
+        ...prevHabits,
+        [dayOfWeek]: habitExists ? handleFilterHabit(habitsForDay, selectedHabit) : [...habitsForDay, selectedHabit],
       }
       localStorage.setItem(localStorageKey, JSON.stringify(updatedCheckedHabits));
       return updatedCheckedHabits;
     });
   };
-  console.log('morning', clickedHabitIndex);
-  console.log('afternoon', clickedAfterNoonHabitIndex);
-  console.log('evening', clickedEveningHabitIndex);
-  console.log('anytime', clickedAnyTimeHabitIndex);
+  // console.log('morning', clickedHabitIndex);
+  // console.log('afternoon', clickedAfterNoonHabitIndex);
+  // console.log('evening', clickedEveningHabitIndex);
+  // console.log('anytime', clickedAnyTimeHabitIndex);
   const handleOpenMorningDialog = () => {
     setOpenMorningDialog(true);
   };
@@ -364,12 +360,8 @@ const Page = () => {
       habitsForDay = updatedCheckedHabits[dayKey] || [];
     }
     if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-      updatedCheckedHabits[dayKey] = habitsForDay.filter(
-          (habit) => habit !== selectedHabit.habit
-      );
-      updatedCheckedHabits[dateKey] = habitsForDay.filter(
-          (habit) => habit !== selectedHabit.habit
-      );
+      updatedCheckedHabits[dayKey] = habitsForDay.filter((habit) => habit !== selectedHabit.habit);
+      updatedCheckedHabits[dateKey] = habitsForDay.filter((habit) => habit !== selectedHabit.habit);
     } else {
       if(!habitsForDay.includes(selectedHabit.habit)) {
           updatedCheckedHabits[dateKey] = [
@@ -485,9 +477,9 @@ const Page = () => {
             updatedCheckedHabits[dateKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
             );
-            updatedCheckedHabits[dayKey] = habitsForDay.filter(
-                (habit) => habit !== selectedHabit.habit
-            )
+            // updatedCheckedHabits[dayKey] = habitsForDay.filter(
+            //     (habit) => habit !== selectedHabit.habit
+            // )
           } else {
             updatedCheckedHabits[dateKey] = [
               ...habitsForDay,
@@ -558,7 +550,7 @@ const Page = () => {
                 handleOptionChange(habitOption, setHabitOption, event)
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, morningHabitRenderer, setClickedHabitIndex, "clickedHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedHabits, setClickedHabitIndex, "clickedHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -601,7 +593,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, afterNoonHabitRenderer, setClickedAfterNoonHabitIndex, "clickedAfterNoonHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedAHabits, setClickedAfterNoonHabitIndex, "clickedAfterNoonHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -644,7 +636,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, eveningHabitRenderer, setClickedEveningHabitIndex, "clickedEveningHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedEHabits, setClickedEveningHabitIndex, "clickedEveningHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -687,7 +679,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, anyTimeHabitRender, setClickedAnyTimeHabitIndex, "clickedAnyTimeHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedAnyTimeHabits, setClickedAnyTimeHabitIndex, "clickedAnyTimeHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />

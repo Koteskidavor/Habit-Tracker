@@ -14,6 +14,7 @@ const TableBody = ({ combinedRenderer, isMobileResponsive, weekDays, clickedHabi
               </div>
             </td>
             {weekDays.map((day, dayIndex) => {
+              // const habitsForDay = clickedHabitIndex[day.dateKey] || [];
               const habitsForDay = clickedHabitIndex[day.dateKey] || [];
               const isHabitPresentForDay = habitsForDay.includes(
                   item.habit
