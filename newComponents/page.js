@@ -122,9 +122,25 @@ const Page = () => {
       const selectedHabit = habits[dayOfWeek][index];
       const habitsForDay = prevHabits[dayOfWeek] || [];
       const habitExists = habitsForDay.includes(selectedHabit);
-      const updatedCheckedHabits = {
-        ...prevHabits,
-        [dayOfWeek]: habitExists ? handleFilterHabit(habitsForDay, selectedHabit) : [...habitsForDay, selectedHabit],
+      let updatedCheckedHabits = { ...prevHabits };
+      if (habitExists) {
+        const allHabitsExist = habitsForDay.every(habit => habits[dayOfWeek].includes(habit));
+        if (!allHabitsExist) {
+          updatedCheckedHabits = {
+            ...prevHabits,
+            [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek].includes(habit)),
+          };
+        } else {
+          updatedCheckedHabits = {
+            ...prevHabits,
+            [dayOfWeek]: handleFilterHabit(habitsForDay, selectedHabit),
+          };
+        }
+      } else {
+        updatedCheckedHabits = {
+          ...prevHabits,
+          [dayOfWeek]: [...habitsForDay, selectedHabit],
+        };
       }
       localStorage.setItem(localStorageKey, JSON.stringify(updatedCheckedHabits));
       return updatedCheckedHabits;
@@ -374,12 +390,7 @@ const Page = () => {
         )
       }
   };
-  const handleCheckboxClick = (
-    index,
-    setCheckedHabits,
-    morningHabitRenderer,
-    habitOption
-  ) => {
+  const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption ) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
@@ -387,6 +398,8 @@ const Page = () => {
       let newDate = new Date();
       let day = newDate.getDay();
       let diff;
+
+      let updatedClickedHabitIndex = clickedHabitIndex ? { ...clickedHabitIndex } : {};
       switch (habitOption) {
         case "Monday":
           diff = day < 1 ? 1 - day : 8 - day;
@@ -477,9 +490,11 @@ const Page = () => {
             updatedCheckedHabits[dateKey] = habitsForDay.filter(
                 (habit) => habit !== selectedHabit.habit
             );
-            // updatedCheckedHabits[dayKey] = habitsForDay.filter(
-            //     (habit) => habit !== selectedHabit.habit
-            // )
+            if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
+              updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
+                  habit => habitsForDay.includes(habit)
+              );
+            }
           } else {
             updatedCheckedHabits[dateKey] = [
               ...habitsForDay,
@@ -491,6 +506,7 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
+  // console.log(clickedHabitIndex);
   const isMobileResponsive = useMediaQuery("(max-width: 600px)");
   // useEffect(() => {
   //   localStorage.clear();
