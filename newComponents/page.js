@@ -390,7 +390,7 @@ const Page = () => {
         )
       }
   };
-  const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption ) => {
+  const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption, localStorageKey ) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
@@ -398,7 +398,6 @@ const Page = () => {
       let newDate = new Date();
       let day = newDate.getDay();
       let diff;
-
       let updatedClickedHabitIndex = clickedHabitIndex ? { ...clickedHabitIndex } : {};
       switch (habitOption) {
         case "Monday":
@@ -492,9 +491,15 @@ const Page = () => {
             );
             if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
               updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
-                  habit => habitsForDay.includes(habit)
+                  habit => habit !== selectedHabit.habit,
               );
             }
+            const updatedLocalStorageClickedHabitIndex = {
+              ...clickedHabitIndex,
+              [dateKey]: updatedClickedHabitIndex[dateKey]
+            };
+            setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
+            localStorage.setItem("clickedHabitIndex", JSON.stringify(updatedLocalStorageClickedHabitIndex));
           } else {
             updatedCheckedHabits[dateKey] = [
               ...habitsForDay,
@@ -506,7 +511,6 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  // console.log(clickedHabitIndex);
   const isMobileResponsive = useMediaQuery("(max-width: 600px)");
   // useEffect(() => {
   //   localStorage.clear();
