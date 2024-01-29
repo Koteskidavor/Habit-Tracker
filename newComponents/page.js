@@ -109,11 +109,6 @@ const Page = () => {
   const [clickedAnyTimeHabitIndex, setClickedAnyTimeHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedAnyTimeHabitIndex")) || {}
   );
-  // const getCombinedRendererHabit = (renderer, index, combinedRenderer) => {
-  //   const morningHabitName = renderer[index]?.habit;
-  //   const matchingCombinedHabits = combinedRenderer.find(habit => habit.habit === morningHabitName);
-  //   return matchingCombinedHabits ? matchingCombinedHabits.habit : null;
-  // }
   const handleFilterHabit = (habitsForDay, selectedHabit) => {
     return habitsForDay.filter((habit) => habit !== selectedHabit);
   }
@@ -122,6 +117,7 @@ const Page = () => {
       const selectedHabit = habits[dayOfWeek][index];
       const habitsForDay = prevHabits[dayOfWeek] || [];
       const habitExists = habitsForDay.includes(selectedHabit);
+      // const selectedHabitDate = habits[dateKey] && habits[dateKey][index];
       let updatedCheckedHabits = { ...prevHabits };
       if (habitExists) {
         const allHabitsExist = habitsForDay.every(habit => habits[dayOfWeek].includes(habit));
@@ -146,7 +142,7 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  // console.log('morning', clickedHabitIndex);
+  console.log('morning', clickedHabitIndex);
   // console.log('afternoon', clickedAfterNoonHabitIndex);
   // console.log('evening', clickedEveningHabitIndex);
   // console.log('anytime', clickedAnyTimeHabitIndex);
@@ -373,11 +369,15 @@ const Page = () => {
     if (!updatedCheckedHabits[dayKey]) {
       newDate.setDate(newDate.getDate() + diff);
       dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-      habitsForDay = updatedCheckedHabits[dayKey] || [];
+      habitsForDay = updatedCheckedHabits[dateKey] || [];
     }
     if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-      updatedCheckedHabits[dayKey] = habitsForDay.filter((habit) => habit !== selectedHabit.habit);
-      updatedCheckedHabits[dateKey] = habitsForDay.filter((habit) => habit !== selectedHabit.habit);
+      updatedCheckedHabits[dayKey] = habitsForDay.filter(
+          (habit) => habit !== selectedHabit.habit
+      );
+      updatedCheckedHabits[dateKey] = habitsForDay.filter(
+          (habit) => habit !== selectedHabit.habit
+      );
     } else {
       if(!habitsForDay.includes(selectedHabit.habit)) {
           updatedCheckedHabits[dateKey] = [
@@ -390,7 +390,7 @@ const Page = () => {
         )
       }
   };
-  const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption, localStorageKey ) => {
+  const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption, clickedHabitIndex, setClickedHabitIndex, localStorageKey ) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
@@ -398,7 +398,7 @@ const Page = () => {
       let newDate = new Date();
       let day = newDate.getDay();
       let diff;
-      let updatedClickedHabitIndex = clickedHabitIndex ? { ...clickedHabitIndex } : {};
+      let updatedClickedHabitIndex = clickedHabitIndex ? clickedHabitIndex : { ...clickedHabitIndex };
       switch (habitOption) {
         case "Monday":
           diff = day < 1 ? 1 - day : 8 - day;
@@ -499,7 +499,7 @@ const Page = () => {
               [dateKey]: updatedClickedHabitIndex[dateKey]
             };
             setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
-            localStorage.setItem("clickedHabitIndex", JSON.stringify(updatedLocalStorageClickedHabitIndex));
+            localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
           } else {
             updatedCheckedHabits[dateKey] = [
               ...habitsForDay,
@@ -549,10 +549,13 @@ const Page = () => {
               habitRenderer={morningHabitRenderer}
               handleCheckboxClick={(index) =>
                 handleCheckboxClick(
-                  index,
-                  setCheckedHabits,
-                  morningHabitRenderer,
-                  habitOption
+                    index,
+                    setCheckedHabits,
+                    morningHabitRenderer,
+                    habitOption,
+                    clickedHabitIndex,
+                    setClickedHabitIndex,
+                    "clickedHabitIndex"
                 )
               }
               dateKey={dateKey}
@@ -588,10 +591,13 @@ const Page = () => {
               habitRenderer={afterNoonHabitRenderer}
               handleCheckboxClick={(index) =>
                 handleCheckboxClick(
-                  index,
-                  setCheckedAHabits,
-                  afterNoonHabitRenderer,
-                  habitOptionAfternoon
+                    index,
+                    setCheckedAHabits,
+                    afterNoonHabitRenderer,
+                    habitOptionAfternoon,
+                    clickedAfterNoonHabitIndex,
+                    setClickedAfterNoonHabitIndex,
+                    "clickedAfterNoonHabitIndex"
                 )
               }
               dateKey={dateKey}
@@ -631,10 +637,13 @@ const Page = () => {
               habitRenderer={eveningHabitRenderer}
               handleCheckboxClick={(index) =>
                 handleCheckboxClick(
-                  index,
-                  setCheckedEHabits,
-                  eveningHabitRenderer,
-                  habitOptionEvening
+                    index,
+                    setCheckedEHabits,
+                    eveningHabitRenderer,
+                    habitOptionEvening,
+                    clickedEveningHabitIndex,
+                    setClickedEveningHabitIndex,
+                    "clickedEveningHabitIndex",
                 )
               }
               dateKey={dateKey}
@@ -677,7 +686,10 @@ const Page = () => {
                   index,
                   setCheckedAnyTimeHabits,
                   anyTimeHabitRender,
-                  habitOptionAnytime
+                  habitOptionAnytime,
+                  clickedAnyTimeHabitIndex,
+                  setClickedAnyTimeHabitIndex,
+                  "clickedAnyTimeHabitIndex"
                 )
               }
               dateKey={dateKey}
