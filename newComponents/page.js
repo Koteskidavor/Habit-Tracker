@@ -114,17 +114,16 @@ const Page = () => {
   }
   const handleCardClick = (dayOfWeek, index, habits, setClickedHabitIndex, localStorageKey) => {
     setClickedHabitIndex((prevHabits) => {
-      const selectedHabit = habits[dayOfWeek][index];
+      const selectedHabit = ((habits[dayKey] && habits[dayKey][index]) || (habits[dateKey] && habits[dateKey][index]));
       const habitsForDay = prevHabits[dayOfWeek] || [];
       const habitExists = habitsForDay.includes(selectedHabit);
-      // const selectedHabitDate = habits[dateKey] && habits[dateKey][index];
       let updatedCheckedHabits = { ...prevHabits };
       if (habitExists) {
-        const allHabitsExist = habitsForDay.every(habit => habits[dayOfWeek].includes(habit));
+        const allHabitsExist = habitsForDay.every(habit => habits[dayKey] || habits[dayOfWeek].includes(habit));
         if (!allHabitsExist) {
           updatedCheckedHabits = {
             ...prevHabits,
-            [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek].includes(habit)),
+            [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek] || habits[dayOfWeek].includes(habit)),
           };
         } else {
           updatedCheckedHabits = {
