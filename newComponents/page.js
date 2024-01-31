@@ -141,7 +141,7 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  console.log('morning', clickedHabitIndex);
+  // console.log('morning', clickedHabitIndex);
   // console.log('afternoon', clickedAfterNoonHabitIndex);
   // console.log('evening', clickedEveningHabitIndex);
   // console.log('anytime', clickedAnyTimeHabitIndex);
