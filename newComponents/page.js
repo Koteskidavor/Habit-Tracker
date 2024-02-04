@@ -112,7 +112,6 @@ const Page = () => {
   const handleFilterHabit = (habitsForDay, selectedHabit) => {
     return habitsForDay.filter((habit) => habit !== selectedHabit);
   }
-  console.log(checkedHabits);
   const handleCardClick = (dayOfWeek, index, habits, setClickedHabitIndex, localStorageKey) => {
     setClickedHabitIndex((prevHabits) => {
       const selectedHabit = ((habits[dayKey] && habits[dayKey][index]) || (habits[dateKey] && habits[dateKey][index]));
@@ -132,6 +131,13 @@ const Page = () => {
             [dayOfWeek]: handleFilterHabit(habitsForDay, selectedHabit),
           };
         }
+        if(prevHabits.hasOwnProperty(dayKey)) {
+          updatedCheckedHabits[dayOfWeek] = updatedCheckedHabits[dayOfWeek] || [];
+          updatedCheckedHabits[dayOfWeek] = [
+              ...updatedCheckedHabits[dayOfWeek],
+              ...prevHabits[dayKey]
+          ]
+        }
       } else {
         updatedCheckedHabits = {
           ...prevHabits,
@@ -142,8 +148,8 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  console.log(clickedHabitIndex)
-  // console.log('morning', clickedHabitIndex);
+  // console.log(checkedHabits);
+  console.log('morning', clickedHabitIndex);
   // console.log('afternoon', clickedAfterNoonHabitIndex);
   // console.log('evening', clickedEveningHabitIndex);
   // console.log('anytime', clickedAnyTimeHabitIndex);
@@ -355,9 +361,6 @@ const Page = () => {
       setHabitOption(event.target.value);
     }
   };
-  // function pad(num) {
-  //   return num < 10 ? "0" + num : num;
-  // }
   const day = date.toLocaleString("en-US", { weekday: "short" });
   let dayKey = date.toLocaleString("en-US", { weekday: "short" });
   let dateKey = `${day}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
