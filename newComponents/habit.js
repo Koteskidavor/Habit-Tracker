@@ -11,7 +11,8 @@ const Habit = ({
 }) => {
   return (
     <div className={isMobileResponsive ? "habit-containerRes habit-container" : "habit-container"}>
-      {(checkedHabits[dateKey] || checkedHabits[dayKey])?.map(
+      {/*{(checkedHabits[dateKey] || checkedHabits[dayKey])?.map(*/}
+        {([...(checkedHabits[dateKey] || []), ...(checkedHabits[dayKey] || [])])?.map(
         (habit, index) => {
           const habitDetails = habitRenderer.find(
             (item) => item.habit === habit

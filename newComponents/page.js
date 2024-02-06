@@ -14,6 +14,7 @@ import {
   initialEveningRenderer,
   initialAnyTimeRenderer,
 } from "./list";
+import habit from "./habit";
 const Page = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   // const [activeHabits, setActiveHabits] = useState(
@@ -131,13 +132,6 @@ const Page = () => {
             [dayOfWeek]: handleFilterHabit(habitsForDay, selectedHabit),
           };
         }
-        if(prevHabits.hasOwnProperty(dayKey)) {
-          updatedCheckedHabits[dayOfWeek] = updatedCheckedHabits[dayOfWeek] || [];
-          updatedCheckedHabits[dayOfWeek] = [
-              ...updatedCheckedHabits[dayOfWeek],
-              ...prevHabits[dayKey]
-          ]
-        }
       } else {
         updatedCheckedHabits = {
           ...prevHabits,
@@ -148,8 +142,8 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  // console.log(checkedHabits);
-  console.log('morning', clickedHabitIndex);
+  console.log(checkedHabits);
+  // console.log('morning', clickedHabitIndex);
   // console.log('afternoon', clickedAfterNoonHabitIndex);
   // console.log('evening', clickedEveningHabitIndex);
   // console.log('anytime', clickedAnyTimeHabitIndex);
