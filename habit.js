@@ -11,7 +11,8 @@ const Habit = ({
 }) => {
   return (
     <div className={isMobileResponsive ? "habit-containerRes habit-container" : "habit-container"}>
-      {(checkedHabits[dateKey] || checkedHabits[dayKey])?.map(
+      {/*{(checkedHabits[dateKey] || checkedHabits[dayKey])?.map(*/}
+        {[...(new Set([...(checkedHabits[dateKey] || []), ...(checkedHabits[dayKey] || [])]))]?.map(
         (habit, index) => {
           const habitDetails = habitRenderer.find(
             (item) => item.habit === habit
@@ -20,8 +21,7 @@ const Habit = ({
             return null;
           }
           const { img, habit: habitName } = habitDetails;
-          // const isHabitClicked = clickedIndex[dateKey];
-          const isHabitClicked = clickedIndex[dateKey] && clickedIndex[dateKey].includes(index);
+          const isHabitClicked = clickedIndex[dateKey] && clickedIndex[dateKey].includes(habitName);
           return (
             <div
               key={index}

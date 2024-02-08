@@ -14,6 +14,7 @@ import {
   initialEveningRenderer,
   initialAnyTimeRenderer,
 } from "./list";
+import habit from "./habit";
 const Page = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   // const [activeHabits, setActiveHabits] = useState(
@@ -90,22 +91,6 @@ const Page = () => {
     );
     return combinedHabits;
   };
-  const getCheckedHabits = (habits1, habits2, habits3, habits4) => {
-    const combinedHabits = {};
-    Object.keys(habits1).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits1[day]]));
-    });
-    Object.keys(habits2).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits2[day]]));
-    })
-    Object.keys(habits3).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits3[day]]));
-    })
-    Object.keys(habits4).forEach((day) => {
-      combinedHabits[day] = Array.from(new Set([...(combinedHabits[day] || []), ...habits4[day]]));
-    })
-    return combinedHabits;
-  }
   const newArray = [
     ...getCombinedHabits(morningHabitRenderer),
     ...getCombinedHabits(afterNoonHabitRenderer),
@@ -113,7 +98,6 @@ const Page = () => {
     ...getCombinedHabits(anyTimeHabitRender),
   ];
   const combinedRenderer = getCombinedHabits(newArray);
-  const checkedRenderer = getCheckedHabits(checkedHabits, checkedAHabits, checkedEHabits, checkedAnyTimeHabits);
   const [clickedHabitIndex, setClickedHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedHabitIndex")) || {}
   );
@@ -126,41 +110,43 @@ const Page = () => {
   const [clickedAnyTimeHabitIndex, setClickedAnyTimeHabitIndex] = useState(
     JSON.parse(localStorage.getItem("clickedAnyTimeHabitIndex")) || {}
   );
-  const handleCardClick = (dayOfWeek, index, setClickedHabitIndex, localStorageKey) => {
-    const selectedHabit = combinedRenderer[index];
-    setClickedHabitIndex((prevClickedHabits) => {
-      const updatedCheckedHabits = { ...prevClickedHabits };
-      let habitsForDay = updatedCheckedHabits[dateKey] || [];
-      if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-        updatedCheckedHabits[dateKey] = habitsForDay.filter(
-            (habit) => habit !== selectedHabit.habit
-        );
+  const handleFilterHabit = (habitsForDay, selectedHabit) => {
+    return habitsForDay.filter((habit) => habit !== selectedHabit);
+  }
+  const handleCardClick = (dayOfWeek, index, habits, setClickedHabitIndex, localStorageKey) => {
+    setClickedHabitIndex((prevHabits) => {
+      const selectedHabit = ((habits[dayKey] && habits[dayKey][index]) || (habits[dateKey] && habits[dateKey][index]));
+      const habitsForDay = prevHabits[dayOfWeek] || [];
+      const habitExists = habitsForDay.includes(selectedHabit);
+      let updatedCheckedHabits = { ...prevHabits };
+      if (habitExists) {
+        const allHabitsExist = habitsForDay.every(habit => habits[dayKey] || habits[dayOfWeek].includes(habit));
+        if (!allHabitsExist) {
+          updatedCheckedHabits = {
+            ...prevHabits,
+            [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek] || habits[dayOfWeek].includes(habit)),
+          };
+        } else {
+          updatedCheckedHabits = {
+            ...prevHabits,
+            [dayOfWeek]: handleFilterHabit(habitsForDay, selectedHabit),
+          };
+        }
       } else {
-        updatedCheckedHabits[dateKey] = [
-          ...habitsForDay,
-          selectedHabit ? selectedHabit.habit : "",
-        ];
+        updatedCheckedHabits = {
+          ...prevHabits,
+          [dayOfWeek]: [...habitsForDay, selectedHabit],
+        };
       }
+      localStorage.setItem(localStorageKey, JSON.stringify(updatedCheckedHabits));
       return updatedCheckedHabits;
-    })
-    // setClickedHabitIndex((prevClickedHabits) => {
-    //   if (prevClickedHabits[dayOfWeek]?.includes(index)) {
-    //     const updatedHabits = {
-    //       ...prevClickedHabits,
-    //       [dayOfWeek]: prevClickedHabits[dayOfWeek].filter((i) => i !== index),
-    //     };
-    //     localStorage.setItem(localStorageKey, JSON.stringify(updatedHabits));
-    //     return updatedHabits;
-    //   } else {
-    //     const updatedHabits = {
-    //       ...prevClickedHabits,
-    //       [dayOfWeek]: [...(prevClickedHabits[dayOfWeek] || []), index],
-    //     }
-    //     localStorage.setItem(localStorageKey, JSON.stringify(updatedHabits));
-    //     return updatedHabits;
-    //   }
-    // });
+    });
   };
+  // console.log(checkedHabits);
+  // console.log('morning', clickedHabitIndex);
+  // console.log('afternoon', clickedAfterNoonHabitIndex);
+  // console.log('evening', clickedEveningHabitIndex);
+  // console.log('anytime', clickedAnyTimeHabitIndex);
   const handleOpenMorningDialog = () => {
     setOpenMorningDialog(true);
   };
@@ -372,26 +358,24 @@ const Page = () => {
   const day = date.toLocaleString("en-US", { weekday: "short" });
   let dayKey = date.toLocaleString("en-US", { weekday: "short" });
   let dateKey = `${day}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}`;
+  const [dayStr, dateStr, monthStr, yearStr] = dateKey.split('_');
+  const newDateKey = new Date(parseInt(yearStr), parseInt(monthStr), parseInt(dateStr));
+  const todayDate = new Date();
+  // const newDay = todayDate.toLocaleString("en-US", { weekday: "short" });
+  // const today = `${newDay}_${todayDate.getDate()}_${todayDate.getMonth()}_${todayDate.getFullYear()}`;
+  // const today = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate())
+  const today = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
   const handleCheckLogic = (
     dayKey,
     updatedCheckedHabits,
     selectedHabit,
     habitsForDay,
     dateKey,
-    diff,
-    newDate
   ) => {
-    // const today = new Date();
-    // today.setHours(0, 0, 0, 0);
-    // if(newDate < today) {
-    //   return null;
-    // }
-    if (!updatedCheckedHabits[dayKey]) {
-      newDate.setDate(newDate.getDate() + diff);
-      dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-      habitsForDay = updatedCheckedHabits[dayKey] || [];
+    if(!updatedCheckedHabits[dayKey]) {
+      updatedCheckedHabits[dayKey] = [];
     }
-    if (selectedHabit && habitsForDay && habitsForDay.includes(selectedHabit.habit)) {
+    if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
       updatedCheckedHabits[dayKey] = habitsForDay.filter(
           (habit) => habit !== selectedHabit.habit
       );
@@ -399,23 +383,18 @@ const Page = () => {
           (habit) => habit !== selectedHabit.habit
       );
     } else {
-      if(!updatedCheckedHabits && !updatedCheckedHabits[dateKey].includes(selectedHabit.habit)) {
+      if(!habitsForDay.includes(selectedHabit.habit)) {
           updatedCheckedHabits[dateKey] = [
             ...(updatedCheckedHabits[dateKey] || []),
             selectedHabit.habit,
           ];
         }
+        updatedCheckedHabits[dayKey] = Array.from(
+            new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+        )
       }
-      updatedCheckedHabits[dayKey] = Array.from(
-          new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
-      )
   };
-  const handleCheckboxClick = (
-    index,
-    setCheckedHabits,
-    morningHabitRenderer,
-    habitOption
-  ) => {
+  const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption, clickedHabitIndex, setClickedHabitIndex, localStorageKey ) => {
     const selectedHabit = morningHabitRenderer[index];
     setCheckedHabits((prevCheckedHabits) => {
       const updatedCheckedHabits = { ...prevCheckedHabits };
@@ -423,106 +402,117 @@ const Page = () => {
       let newDate = new Date();
       let day = newDate.getDay();
       let diff;
-      switch (habitOption) {
-        case "Monday":
-          diff = day < 1 ? 1 - day : 8 - day;
-          handleCheckLogic(
-              dayKey,
-              updatedCheckedHabits,
-              selectedHabit,
-              habitsForDay,
-              dateKey,
-              diff,
-              newDate
-          );
-          break;
-        case "Tuesday":
-          diff = day <= 2 ? 2 - day : 9 - day;
-          handleCheckLogic(
-              dayKey,
-              updatedCheckedHabits,
-              selectedHabit,
-              habitsForDay,
-              dateKey,
-              diff,
-              newDate
-          );
-          break;
-        case "Wednesday":
-          diff = day <= 3 ? 3 - day : 10 - day;
-          handleCheckLogic(
-              dayKey,
-              updatedCheckedHabits,
-              selectedHabit,
-              habitsForDay,
-              dateKey,
-              diff,
-              newDate
-          );
-          break;
-        case "Thursday":
-          diff = day <= 4 ? 4 - day : 11 - day;
-          handleCheckLogic(
-              dayKey,
-              updatedCheckedHabits,
-              selectedHabit,
-              habitsForDay,
-              dateKey,
-              diff,
-              newDate
-          );
-          break;
-        case "Friday":
-          diff = day <= 5 ? 5 - day : 12 - day;
-          handleCheckLogic(
-              dayKey,
-              updatedCheckedHabits,
-              selectedHabit,
-              habitsForDay,
-              dateKey,
-              diff,
-              newDate
-          );
-          break;
-        case "Saturday":
-          diff = day <= 6 ? 6 - day : 13 - day;
-          handleCheckLogic(
-              dayKey,
-              updatedCheckedHabits,
-              selectedHabit,
-              habitsForDay,
-              dateKey,
-              diff,
-              newDate
-          );
-          break;
-        case "Sunday":
-          diff = day <= 0 ? 0 - day : 7 - day;
-          handleCheckLogic(
-              dayKey,
-              updatedCheckedHabits,
-              selectedHabit,
-              habitsForDay,
-              dateKey,
-              diff,
-              newDate
-          );
-          break;
-        default:
-          if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            updatedCheckedHabits[dateKey] = habitsForDay.filter(
-                (habit) => habit !== selectedHabit.habit
+      let updatedClickedHabitIndex = clickedHabitIndex ? clickedHabitIndex : { ...clickedHabitIndex };
+      if (newDateKey.getTime() >= today.getTime()) {
+        switch (habitOption) {
+          case "Monday":
+            diff = day < 1 ? 1 - day : 8 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
             );
-            updatedCheckedHabits[dayKey] = habitsForDay.filter(
-                (habit) => habit !== selectedHabit.habit
-            )
-          } else {
-            updatedCheckedHabits[dateKey] = [
-              ...habitsForDay,
-              selectedHabit ? selectedHabit.habit : "",
-            ];
-          }
-          break;
+            break;
+          case "Tuesday":
+            diff = day <= 2 ? 2 - day : 9 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
+            );
+            break;
+          case "Wednesday":
+            diff = day <= 3 ? 3 - day : 10 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
+            );
+            break;
+          case "Thursday":
+            diff = day <= 4 ? 4 - day : 11 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
+            );
+            break;
+          case "Friday":
+            diff = day <= 5 ? 5 - day : 12 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
+            );
+            break;
+          case "Saturday":
+            diff = day <= 6 ? 6 - day : 13 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
+            );
+            break;
+          case "Sunday":
+            diff = day <= 0 ? 0 - day : 7 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
+            );
+            break;
+          default:
+            if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+              updatedCheckedHabits[dateKey] = habitsForDay.filter(
+                  (habit) => habit !== selectedHabit.habit
+              );
+              if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
+                updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
+                    habit => habit !== selectedHabit.habit,
+                );
+              }
+              const updatedLocalStorageClickedHabitIndex = {
+                ...clickedHabitIndex,
+                [dateKey]: updatedClickedHabitIndex[dateKey]
+              };
+              setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
+              localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
+            } else {
+              updatedCheckedHabits[dateKey] = [
+                ...habitsForDay,
+                selectedHabit ? selectedHabit.habit : "",
+              ];
+            }
+            break;
+        }
       }
       return updatedCheckedHabits;
     });
@@ -565,10 +555,13 @@ const Page = () => {
               habitRenderer={morningHabitRenderer}
               handleCheckboxClick={(index) =>
                 handleCheckboxClick(
-                  index,
-                  setCheckedHabits,
-                  morningHabitRenderer,
-                  habitOption
+                    index,
+                    setCheckedHabits,
+                    morningHabitRenderer,
+                    habitOption,
+                    clickedHabitIndex,
+                    setClickedHabitIndex,
+                    "clickedHabitIndex"
                 )
               }
               dateKey={dateKey}
@@ -586,7 +579,7 @@ const Page = () => {
                 handleOptionChange(habitOption, setHabitOption, event)
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedHabitIndex, "clickedHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedHabits, setClickedHabitIndex, "clickedHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -604,10 +597,13 @@ const Page = () => {
               habitRenderer={afterNoonHabitRenderer}
               handleCheckboxClick={(index) =>
                 handleCheckboxClick(
-                  index,
-                  setCheckedAHabits,
-                  afterNoonHabitRenderer,
-                  habitOptionAfternoon
+                    index,
+                    setCheckedAHabits,
+                    afterNoonHabitRenderer,
+                    habitOptionAfternoon,
+                    clickedAfterNoonHabitIndex,
+                    setClickedAfterNoonHabitIndex,
+                    "clickedAfterNoonHabitIndex"
                 )
               }
               dateKey={dateKey}
@@ -629,7 +625,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedAfterNoonHabitIndex, "clickedAfterNoonHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedAHabits, setClickedAfterNoonHabitIndex, "clickedAfterNoonHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -647,10 +643,13 @@ const Page = () => {
               habitRenderer={eveningHabitRenderer}
               handleCheckboxClick={(index) =>
                 handleCheckboxClick(
-                  index,
-                  setCheckedEHabits,
-                  eveningHabitRenderer,
-                  habitOptionEvening
+                    index,
+                    setCheckedEHabits,
+                    eveningHabitRenderer,
+                    habitOptionEvening,
+                    clickedEveningHabitIndex,
+                    setClickedEveningHabitIndex,
+                    "clickedEveningHabitIndex",
                 )
               }
               dateKey={dateKey}
@@ -672,7 +671,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedEveningHabitIndex, "clickedEveningHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedEHabits, setClickedEveningHabitIndex, "clickedEveningHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
@@ -693,7 +692,10 @@ const Page = () => {
                   index,
                   setCheckedAnyTimeHabits,
                   anyTimeHabitRender,
-                  habitOptionAnytime
+                  habitOptionAnytime,
+                  clickedAnyTimeHabitIndex,
+                  setClickedAnyTimeHabitIndex,
+                  "clickedAnyTimeHabitIndex"
                 )
               }
               dateKey={dateKey}
@@ -715,7 +717,7 @@ const Page = () => {
                 )
               }
               handleCardClick={(dayOfWeek, index) =>
-                handleCardClick(dayOfWeek, index, setClickedAnyTimeHabitIndex, "clickedAnyTimeHabitIndex")
+                handleCardClick(dayOfWeek, index, checkedAnyTimeHabits, setClickedAnyTimeHabitIndex, "clickedAnyTimeHabitIndex")
               }
               isMobileResponsive={isMobileResponsive}
             />
