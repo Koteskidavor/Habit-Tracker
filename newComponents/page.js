@@ -142,7 +142,7 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  console.log(checkedHabits);
+  // console.log(checkedHabits);
   // console.log('morning', clickedHabitIndex);
   // console.log('afternoon', clickedAfterNoonHabitIndex);
   // console.log('evening', clickedEveningHabitIndex);
@@ -371,32 +371,53 @@ const Page = () => {
     selectedHabit,
     habitsForDay,
     dateKey,
-    diff,
-    newDate
   ) => {
-    if (!updatedCheckedHabits[dayKey]) {
-      newDate.setDate(newDate.getDate() + diff);
-      dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-      habitsForDay = updatedCheckedHabits[dateKey] || [];
-    }
-    if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-      updatedCheckedHabits[dayKey] = habitsForDay.filter(
-          (habit) => habit !== selectedHabit.habit
-      );
-      updatedCheckedHabits[dateKey] = habitsForDay.filter(
-          (habit) => habit !== selectedHabit.habit
-      );
+    if(dayKey.includes(dateKey)) {
+      if(!updatedCheckedHabits[dayKey]) {
+        updatedCheckedHabits[dayKey] = [];
+      }
+      const habitsToCopy = updatedCheckedHabits[dayKey];
+      const indexOfSelectedHabit = habitsToCopy.indexOf(selectedHabit.habit);
+      const habitsBeforeSelected = habitsToCopy.slice(0, indexOfSelectedHabit);
+
+      updatedCheckedHabits[dateKey] = [
+          ...habitsBeforeSelected,
+          selectedHabit.habit,
+          ...(updatedCheckedHabits[dateKey] || []),
+      ];
     } else {
-      if(!habitsForDay.includes(selectedHabit.habit)) {
-          updatedCheckedHabits[dateKey] = [
+      if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+        updatedCheckedHabits[dateKey] = habitsForDay.filter(
+            (habit) => habit !== selectedHabit.habit
+        )
+      } else {
+        updatedCheckedHabits[dateKey] = [
             ...(updatedCheckedHabits[dateKey] || []),
             selectedHabit.habit,
-          ];
-        }
-        updatedCheckedHabits[dayKey] = Array.from(
-            new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
-        )
+        ]
       }
+    }
+    // if(!updatedCheckedHabits[dayKey]) {
+    //   updatedCheckedHabits[dayKey] = [];
+    // }
+    // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+    //   updatedCheckedHabits[dayKey] = habitsForDay.filter(
+    //       (habit) => habit !== selectedHabit.habit
+    //   );
+    //   updatedCheckedHabits[dateKey] = habitsForDay.filter(
+    //       (habit) => habit !== selectedHabit.habit
+    //   );
+    // } else {
+    //   if(!habitsForDay.includes(selectedHabit.habit)) {
+    //       updatedCheckedHabits[dateKey] = [
+    //         ...(updatedCheckedHabits[dateKey] || []),
+    //         selectedHabit.habit,
+    //       ];
+    //     }
+    //     updatedCheckedHabits[dayKey] = Array.from(
+    //         new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+    //     )
+    //   }
   };
   const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption, clickedHabitIndex, setClickedHabitIndex, localStorageKey ) => {
     const selectedHabit = morningHabitRenderer[index];
@@ -411,86 +432,86 @@ const Page = () => {
         switch (habitOption) {
           case "Monday":
             diff = day < 1 ? 1 - day : 8 - day;
-            handleCheckLogic(
-                dayKey,
-                updatedCheckedHabits,
-                selectedHabit,
-                habitsForDay,
-                dateKey,
-                diff,
-                newDate
-            );
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
+            // handleCheckLogic(
+            //     dayKey,
+            //     updatedCheckedHabits,
+            //     selectedHabit,
+            //     habitsForDay,
+            //     dateKey,
+            // );
             break;
           case "Tuesday":
             diff = day <= 2 ? 2 - day : 9 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
             handleCheckLogic(
                 dayKey,
                 updatedCheckedHabits,
                 selectedHabit,
                 habitsForDay,
                 dateKey,
-                diff,
-                newDate
             );
             break;
           case "Wednesday":
             diff = day <= 3 ? 3 - day : 10 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
             handleCheckLogic(
                 dayKey,
                 updatedCheckedHabits,
                 selectedHabit,
                 habitsForDay,
                 dateKey,
-                diff,
-                newDate
             );
             break;
           case "Thursday":
             diff = day <= 4 ? 4 - day : 11 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
             handleCheckLogic(
                 dayKey,
                 updatedCheckedHabits,
                 selectedHabit,
                 habitsForDay,
                 dateKey,
-                diff,
-                newDate
             );
             break;
           case "Friday":
             diff = day <= 5 ? 5 - day : 12 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
             handleCheckLogic(
                 dayKey,
                 updatedCheckedHabits,
                 selectedHabit,
                 habitsForDay,
                 dateKey,
-                diff,
-                newDate
             );
             break;
           case "Saturday":
             diff = day <= 6 ? 6 - day : 13 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
             handleCheckLogic(
                 dayKey,
                 updatedCheckedHabits,
                 selectedHabit,
                 habitsForDay,
                 dateKey,
-                diff,
-                newDate
             );
             break;
           case "Sunday":
             diff = day <= 0 ? 0 - day : 7 - day;
+            newDate.setDate(newDate.getDate() + diff);
+            dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
             handleCheckLogic(
                 dayKey,
                 updatedCheckedHabits,
                 selectedHabit,
                 habitsForDay,
                 dateKey,
-                diff,
-                newDate
             );
             break;
           default:
@@ -521,6 +542,7 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
+  console.log(checkedHabits)
   const isMobileResponsive = useMediaQuery("(max-width: 600px)");
   // useEffect(() => {
   //   localStorage.clear();
