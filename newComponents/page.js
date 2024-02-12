@@ -372,52 +372,27 @@ const Page = () => {
     habitsForDay,
     dateKey,
   ) => {
-    if(dayKey.includes(dateKey)) {
-      if(!updatedCheckedHabits[dayKey]) {
-        updatedCheckedHabits[dayKey] = [];
-      }
-      const habitsToCopy = updatedCheckedHabits[dayKey];
-      const indexOfSelectedHabit = habitsToCopy.indexOf(selectedHabit.habit);
-      const habitsBeforeSelected = habitsToCopy.slice(0, indexOfSelectedHabit);
-
-      updatedCheckedHabits[dateKey] = [
-          ...habitsBeforeSelected,
-          selectedHabit.habit,
-          ...(updatedCheckedHabits[dateKey] || []),
-      ];
+    if(!updatedCheckedHabits[dayKey]) {
+      updatedCheckedHabits[dayKey] = [];
+    }
+    if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+      updatedCheckedHabits[dayKey] = habitsForDay.filter(
+          (habit) => habit !== selectedHabit.habit
+      );
+      updatedCheckedHabits[dateKey] = habitsForDay.filter(
+          (habit) => habit !== selectedHabit.habit
+      );
     } else {
-      if(selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-        updatedCheckedHabits[dateKey] = habitsForDay.filter(
-            (habit) => habit !== selectedHabit.habit
-        )
-      } else {
-        updatedCheckedHabits[dateKey] = [
+      if(!habitsForDay.includes(selectedHabit.habit)) {
+          updatedCheckedHabits[dateKey] = [
             ...(updatedCheckedHabits[dateKey] || []),
             selectedHabit.habit,
-        ]
+          ];
+        }
+        updatedCheckedHabits[dayKey] = Array.from(
+            new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
+        )
       }
-    }
-    // if(!updatedCheckedHabits[dayKey]) {
-    //   updatedCheckedHabits[dayKey] = [];
-    // }
-    // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-    //   updatedCheckedHabits[dayKey] = habitsForDay.filter(
-    //       (habit) => habit !== selectedHabit.habit
-    //   );
-    //   updatedCheckedHabits[dateKey] = habitsForDay.filter(
-    //       (habit) => habit !== selectedHabit.habit
-    //   );
-    // } else {
-    //   if(!habitsForDay.includes(selectedHabit.habit)) {
-    //       updatedCheckedHabits[dateKey] = [
-    //         ...(updatedCheckedHabits[dateKey] || []),
-    //         selectedHabit.habit,
-    //       ];
-    //     }
-    //     updatedCheckedHabits[dayKey] = Array.from(
-    //         new Set([...(updatedCheckedHabits[dayKey] || []), selectedHabit.habit])
-    //     )
-    //   }
   };
   const handleCheckboxClick = ( index, setCheckedHabits, morningHabitRenderer, habitOption, clickedHabitIndex, setClickedHabitIndex, localStorageKey ) => {
     const selectedHabit = morningHabitRenderer[index];
@@ -434,13 +409,13 @@ const Page = () => {
             diff = day < 1 ? 1 - day : 8 - day;
             newDate.setDate(newDate.getDate() + diff);
             dayKey = newDate.toLocaleString("en-US", { weekday: "short" });
-            // handleCheckLogic(
-            //     dayKey,
-            //     updatedCheckedHabits,
-            //     selectedHabit,
-            //     habitsForDay,
-            //     dateKey,
-            // );
+            handleCheckLogic(
+                dayKey,
+                updatedCheckedHabits,
+                selectedHabit,
+                habitsForDay,
+                dateKey,
+            );
             break;
           case "Tuesday":
             diff = day <= 2 ? 2 - day : 9 - day;
@@ -515,6 +490,44 @@ const Page = () => {
             );
             break;
           default:
+            // let habitAdded = false;
+            // if(dateKey.includes(dayKey)) {
+            //   if(!updatedCheckedHabits[dateKey]?.includes(selectedHabit.habit)) {
+            //     updatedCheckedHabits[dateKey] = [
+            //         ...habitsForDay,
+            //         selectedHabit ? selectedHabit.habit : "",
+            //     ];
+            //     habitAdded = true;
+            //   }
+            // } else {
+            //   if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            //     updatedCheckedHabits[dateKey] = habitsForDay.filter(
+            //         (habit) => habit !== selectedHabit.habit
+            //     );
+            //     if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
+            //       updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
+            //           habit => habit !== selectedHabit.habit,
+            //       );
+            //     }
+            //     const updatedLocalStorageClickedHabitIndex = {
+            //       ...clickedHabitIndex,
+            //       [dateKey]: updatedClickedHabitIndex[dateKey]
+            //     };
+            //     setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
+            //     localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
+            //   } else {
+            //     updatedCheckedHabits[dateKey] = [
+            //       ...habitsForDay,
+            //       selectedHabit ? selectedHabit.habit : "",
+            //     ];
+            //   }
+            // }
+            // if (habitAdded) {
+            //   updatedCheckedHabits[dayKey] = [
+            //       ...(updatedCheckedHabits[dayKey] || []),
+            //       selectedHabit ? selectedHabit.habit : "",
+            //   ]
+            // }
             if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
               updatedCheckedHabits[dateKey] = habitsForDay.filter(
                   (habit) => habit !== selectedHabit.habit
