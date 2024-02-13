@@ -528,21 +528,35 @@ const Page = () => {
             //       selectedHabit ? selectedHabit.habit : "",
             //   ]
             // }
-            if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-              updatedCheckedHabits[dateKey] = habitsForDay.filter(
-                  (habit) => habit !== selectedHabit.habit
-              );
-              if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
-                updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
-                    habit => habit !== selectedHabit.habit,
-                );
-              }
-              const updatedLocalStorageClickedHabitIndex = {
-                ...clickedHabitIndex,
-                [dateKey]: updatedClickedHabitIndex[dateKey]
-              };
-              setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
-              localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
+            //   1
+            // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
+            //     updatedCheckedHabits[dateKey] = habitsForDay.filter(
+            //         (habit) => habit !== selectedHabit.habit
+            //   );
+            //   if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
+            //     updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
+            //         habit => habit !== selectedHabit.habit,
+            //     );
+            //   }
+            //   const updatedLocalStorageClickedHabitIndex = {
+            //     ...clickedHabitIndex,
+            //     [dateKey]: updatedClickedHabitIndex[dateKey]
+            //   };
+            //   setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
+            //   localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
+            // }
+            if(dateKey.includes(dayKey)) {
+              updatedCheckedHabits[dateKey] = [
+                  ...habitsForDay,
+                  ...updatedCheckedHabits[dayKey],
+                  selectedHabit ? selectedHabit.habit : "",
+              ]
+            } else if (selectedHabit && habitsForDay.some(habit => selectedHabit.habit.includes(habit))) {
+              const uniqueHabitsToAdd = selectedHabit.habit.filter(habit => !habitsForDay.includes(habit));
+              updatedCheckedHabits[dateKey] = [
+                  ...habitsForDay,
+                  ...uniqueHabitsToAdd
+              ];
             } else {
               updatedCheckedHabits[dateKey] = [
                 ...habitsForDay,
