@@ -490,78 +490,28 @@ const Page = () => {
             );
             break;
           default:
-            // let habitAdded = false;
-            // if(dateKey.includes(dayKey)) {
-            //   if(!updatedCheckedHabits[dateKey]?.includes(selectedHabit.habit)) {
-            //     updatedCheckedHabits[dateKey] = [
-            //         ...habitsForDay,
-            //         selectedHabit ? selectedHabit.habit : "",
-            //     ];
-            //     habitAdded = true;
-            //   }
-            // } else {
-            //   if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            //     updatedCheckedHabits[dateKey] = habitsForDay.filter(
-            //         (habit) => habit !== selectedHabit.habit
-            //     );
-            //     if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
-            //       updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
-            //           habit => habit !== selectedHabit.habit,
-            //       );
-            //     }
-            //     const updatedLocalStorageClickedHabitIndex = {
-            //       ...clickedHabitIndex,
-            //       [dateKey]: updatedClickedHabitIndex[dateKey]
-            //     };
-            //     setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
-            //     localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
-            //   } else {
-            //     updatedCheckedHabits[dateKey] = [
-            //       ...habitsForDay,
-            //       selectedHabit ? selectedHabit.habit : "",
-            //     ];
-            //   }
-            // }
-            // if (habitAdded) {
-            //   updatedCheckedHabits[dayKey] = [
-            //       ...(updatedCheckedHabits[dayKey] || []),
-            //       selectedHabit ? selectedHabit.habit : "",
-            //   ]
-            // }
-            //   1
-            // if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
-            //     updatedCheckedHabits[dateKey] = habitsForDay.filter(
-            //         (habit) => habit !== selectedHabit.habit
-            //   );
-            //   if (clickedHabitIndex && clickedHabitIndex[dateKey]) {
-            //     updatedClickedHabitIndex[dateKey] = clickedHabitIndex[dateKey].filter(
-            //         habit => habit !== selectedHabit.habit,
-            //     );
-            //   }
-            //   const updatedLocalStorageClickedHabitIndex = {
-            //     ...clickedHabitIndex,
-            //     [dateKey]: updatedClickedHabitIndex[dateKey]
-            //   };
-            //   setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
-            //   localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
-            // }
-            if(dateKey.includes(dayKey)) {
+            if(dateKey.includes(dayKey) && !habitsForDay.length && Array.isArray(updatedCheckedHabits[dayKey])) {
               updatedCheckedHabits[dateKey] = [
                   ...habitsForDay,
                   ...updatedCheckedHabits[dayKey],
                   selectedHabit ? selectedHabit.habit : "",
               ]
-            } else if (selectedHabit && habitsForDay.some(habit => selectedHabit.habit.includes(habit))) {
-              const uniqueHabitsToAdd = selectedHabit.habit.filter(habit => !habitsForDay.includes(habit));
-              updatedCheckedHabits[dateKey] = [
+            }
+            else {
+              if (habitsForDay.includes(selectedHabit.habit)) {
+                updatedCheckedHabits[dateKey] = habitsForDay.filter(habit => habit !== selectedHabit.habit);
+              } else {
+                updatedCheckedHabits[dateKey] = [
                   ...habitsForDay,
-                  ...uniqueHabitsToAdd
-              ];
-            } else {
-              updatedCheckedHabits[dateKey] = [
-                ...habitsForDay,
-                selectedHabit ? selectedHabit.habit : "",
-              ];
+                  selectedHabit ? selectedHabit.habit : "",
+                ];
+              }
+              const updatedLocalStorageClickedHabitIndex = {
+                ...clickedHabitIndex,
+                [dateKey]: updatedClickedHabitIndex[dateKey]
+              };
+              setClickedHabitIndex(updatedLocalStorageClickedHabitIndex);
+              localStorage.setItem(localStorageKey, JSON.stringify(updatedLocalStorageClickedHabitIndex));
             }
             break;
         }
@@ -569,7 +519,8 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  console.log(checkedHabits)
+  // console.log(clickedHabitIndex);
+  // console.log(checkedHabits)
   const isMobileResponsive = useMediaQuery("(max-width: 600px)");
   // useEffect(() => {
   //   localStorage.clear();
