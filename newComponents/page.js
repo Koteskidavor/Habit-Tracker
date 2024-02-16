@@ -115,16 +115,16 @@ const Page = () => {
   }
   const handleCardClick = (dayOfWeek, index, habits, setClickedHabitIndex, localStorageKey) => {
     setClickedHabitIndex((prevHabits) => {
-      const selectedHabit = ((habits[dayKey] && habits[dayKey][index]) || (habits[dateKey] && habits[dateKey][index]));
+      const selectedHabit = ((habits[dayKey] && habits[dayKey][index]) || (habits[dayOfWeek] && habits[dayOfWeek][index]));
       const habitsForDay = prevHabits[dayOfWeek] || [];
       const habitExists = habitsForDay.includes(selectedHabit);
       let updatedCheckedHabits = { ...prevHabits };
       if (habitExists) {
-        const allHabitsExist = habitsForDay.every(habit => habits[dayKey] || habits[dayOfWeek].includes(habit));
+        const allHabitsExist = habitsForDay.every(habit => habits[dayKey]?.includes(habit) || habits[dayOfWeek]?.includes(habit));
         if (!allHabitsExist) {
           updatedCheckedHabits = {
             ...prevHabits,
-            [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek] || habits[dayOfWeek].includes(habit)),
+            [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek]?.includes(habit)),
           };
         } else {
           updatedCheckedHabits = {
@@ -142,8 +142,9 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
+  console.log(checkedHabits);
   // console.log(checkedHabits);
-  // console.log('morning', clickedHabitIndex);
+  console.log('morning', clickedHabitIndex);
   // console.log('afternoon', clickedAfterNoonHabitIndex);
   // console.log('evening', clickedEveningHabitIndex);
   // console.log('anytime', clickedAnyTimeHabitIndex);
@@ -496,11 +497,14 @@ const Page = () => {
                   ...updatedCheckedHabits[dayKey],
                   selectedHabit ? selectedHabit.habit : "",
               ]
-            }
-            else {
+            } else {
               if (habitsForDay.includes(selectedHabit.habit)) {
                 updatedCheckedHabits[dateKey] = habitsForDay.filter(habit => habit !== selectedHabit.habit);
-              } else {
+                if (updatedClickedHabitIndex[dateKey]?.includes(selectedHabit.habit)) {
+                  updatedClickedHabitIndex[dateKey] = updatedClickedHabitIndex[dateKey].filter(habit => habit !== selectedHabit.habit);
+                }
+              }
+              else {
                 updatedCheckedHabits[dateKey] = [
                   ...habitsForDay,
                   selectedHabit ? selectedHabit.habit : "",
