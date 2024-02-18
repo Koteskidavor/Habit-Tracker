@@ -113,41 +113,7 @@ const Page = () => {
   const handleFilterHabit = (habitsForDay, selectedHabit) => {
     return habitsForDay.filter((habit) => habit !== selectedHabit);
   }
-  const handleCardClick = (dayOfWeek, index, habits, setClickedHabitIndex, localStorageKey) => {
-    setClickedHabitIndex((prevHabits) => {
-      const selectedHabit = ((habits[dayKey] && habits[dayKey][index]) || (habits[dayOfWeek] && habits[dayOfWeek][index]));
-      const habitsForDay = prevHabits[dayOfWeek] || [];
-      const habitExists = habitsForDay.includes(selectedHabit);
-      let updatedCheckedHabits = { ...prevHabits };
-      if (habitExists) {
-        const allHabitsExist = habitsForDay.every(habit => habits[dayKey]?.includes(habit) || habits[dayOfWeek]?.includes(habit));
-        if (!allHabitsExist) {
-          updatedCheckedHabits = {
-            ...prevHabits,
-            [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek]?.includes(habit)),
-          };
-        } else {
-          updatedCheckedHabits = {
-            ...prevHabits,
-            [dayOfWeek]: handleFilterHabit(habitsForDay, selectedHabit),
-          };
-        }
-      } else {
-        updatedCheckedHabits = {
-          ...prevHabits,
-          [dayOfWeek]: [...habitsForDay, selectedHabit],
-        };
-      }
-      localStorage.setItem(localStorageKey, JSON.stringify(updatedCheckedHabits));
-      return updatedCheckedHabits;
-    });
-  };
-  console.log(checkedHabits);
-  // console.log(checkedHabits);
-  console.log('morning', clickedHabitIndex);
-  // console.log('afternoon', clickedAfterNoonHabitIndex);
-  // console.log('evening', clickedEveningHabitIndex);
-  // console.log('anytime', clickedAnyTimeHabitIndex);
+
   const handleOpenMorningDialog = () => {
     setOpenMorningDialog(true);
   };
@@ -366,6 +332,45 @@ const Page = () => {
   // const today = `${newDay}_${todayDate.getDate()}_${todayDate.getMonth()}_${todayDate.getFullYear()}`;
   // const today = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate())
   const today = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+  const handleCardClick = (dayOfWeek, index, habits, setClickedHabitIndex, localStorageKey) => {
+    setClickedHabitIndex((prevHabits) => {
+      const selectedHabit = ((habits[dayKey] && habits[dayKey][index]) || (habits[dayOfWeek] && habits[dayOfWeek][index]));
+      const habitsForDay = prevHabits[dayOfWeek] || [];
+      const habitExists = habitsForDay.includes(selectedHabit);
+      let updatedCheckedHabits = { ...prevHabits };
+      if(newDateKey.getTime() >= today.getTime()) {
+        if (habitExists) {
+          const allHabitsExist = habitsForDay.every(habit => habits[dayKey]?.includes(habit) || habits[dayOfWeek]?.includes(habit));
+          if (!allHabitsExist) {
+            if(dateKey.includes(dayKey) && !habitsForDay.length && Array.isArray(updatedCheckedHabits[dayKey])) {
+              updatedCheckedHabits[dateKey] = [
+                  ...habitsForDay,
+                  ...updatedCheckedHabits[dayKey],
+                  selectedHabit ? selectedHabit.habit : "",
+              ];
+            }
+            // updatedCheckedHabits = {
+            //   ...prevHabits,
+            //   [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek]?.includes(habit)),
+            // };
+          } else {
+            updatedCheckedHabits = {
+              ...prevHabits,
+              [dayOfWeek]: handleFilterHabit(habitsForDay, selectedHabit),
+            };
+          }
+        } else {
+          updatedCheckedHabits = {
+            ...prevHabits,
+            [dayOfWeek]: [...habitsForDay, selectedHabit],
+          };
+        }
+      }
+      localStorage.setItem(localStorageKey, JSON.stringify(updatedCheckedHabits));
+      return updatedCheckedHabits;
+    });
+  };
+  console.log(clickedHabitIndex)
   const handleCheckLogic = (
     dayKey,
     updatedCheckedHabits,
@@ -523,8 +528,6 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  // console.log(clickedHabitIndex);
-  // console.log(checkedHabits)
   const isMobileResponsive = useMediaQuery("(max-width: 600px)");
   // useEffect(() => {
   //   localStorage.clear();
