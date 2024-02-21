@@ -342,17 +342,10 @@ const Page = () => {
         if (habitExists) {
           const allHabitsExist = habitsForDay.every(habit => habits[dayKey]?.includes(habit) || habits[dayOfWeek]?.includes(habit));
           if (!allHabitsExist) {
-            if(dateKey.includes(dayKey) && !habitsForDay.length && Array.isArray(updatedCheckedHabits[dayKey])) {
-              updatedCheckedHabits[dateKey] = [
-                  ...habitsForDay,
-                  ...updatedCheckedHabits[dayKey],
-                  selectedHabit ? selectedHabit.habit : "",
-              ];
-            }
-            // updatedCheckedHabits = {
-            //   ...prevHabits,
-            //   [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek]?.includes(habit)),
-            // };
+            updatedCheckedHabits = {
+              ...prevHabits,
+              [dayOfWeek]: habitsForDay.filter(habit => habits[dayOfWeek]?.includes(habit)),
+            };
           } else {
             updatedCheckedHabits = {
               ...prevHabits,
@@ -370,7 +363,6 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
-  console.log(clickedHabitIndex)
   const handleCheckLogic = (
     dayKey,
     updatedCheckedHabits,
@@ -378,9 +370,6 @@ const Page = () => {
     habitsForDay,
     dateKey,
   ) => {
-    if(!updatedCheckedHabits[dayKey]) {
-      updatedCheckedHabits[dayKey] = [];
-    }
     if (selectedHabit && habitsForDay.includes(selectedHabit.habit)) {
       updatedCheckedHabits[dayKey] = habitsForDay.filter(
           (habit) => habit !== selectedHabit.habit
@@ -528,6 +517,7 @@ const Page = () => {
       return updatedCheckedHabits;
     });
   };
+  console.log(checkedHabits);
   const isMobileResponsive = useMediaQuery("(max-width: 600px)");
   // useEffect(() => {
   //   localStorage.clear();
